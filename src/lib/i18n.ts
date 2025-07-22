@@ -93,9 +93,23 @@ const resources = {
        'apiUrlDescription': 'Endpoint da API para buscar viagens',
        'zone': 'Zona',
        'zoneDescription': 'Número da zona enviado no cabeçalho da API',
-       'save': 'Salvar',
-       'settingsSaved': 'Configurações Salvas',
-       'settingsUpdated': 'As configurações da API foram atualizadas com sucesso.',
+        'save': 'Salvar',
+        'settingsSaved': 'Configurações Salvas',
+        'settingsUpdated': 'As configurações da API foram atualizadas com sucesso.',
+        
+        // Modal translations
+        'actionCenter': 'CENTRAL DE AÇÕES',
+        'dragVehicle': 'ARRASTAR VEÍCULO',
+        'vehicle': 'Veículo',
+        'select': 'SELECIONE',
+        'cancel': 'CANCELAR',
+        'dragCurrentTime': 'Arrastar somente para este horário',
+        'dragFromTime': 'Arrastar a partir deste horário',
+        'dragSameTable': 'Arrastar a partir deste horário para mesma tabela em outros trajetos',
+        
+        // Toast messages
+        'saveSuccess': 'Ação salva com sucesso!',
+        'saveError': 'Erro ao salvar ação. Tente novamente.',
     }
   },
   'en': {
@@ -188,9 +202,23 @@ const resources = {
        'apiUrlDescription': 'URL endpoint for the trips API',
        'zone': 'Zone',
        'zoneDescription': 'Zone number to be passed in the API header',
-       'save': 'Save',
-       'settingsSaved': 'Settings Saved',
-       'settingsUpdated': 'API settings have been updated successfully.',
+        'save': 'Save',
+        'settingsSaved': 'Settings Saved',
+        'settingsUpdated': 'API settings have been updated successfully.',
+        
+        // Modal translations
+        'actionCenter': 'ACTION CENTER',
+        'dragVehicle': 'DRAG VEHICLE',
+        'vehicle': 'Vehicle',
+        'select': 'SELECT',
+        'cancel': 'CANCEL',
+        'dragCurrentTime': 'Drag only for this time',
+        'dragFromTime': 'Drag from this time',
+        'dragSameTable': 'Drag from this time to same table on other routes',
+        
+        // Toast messages
+        'saveSuccess': 'Action saved successfully!',
+        'saveError': 'Error saving action. Please try again.',
     }
   },
   'es-CL': {
@@ -283,9 +311,23 @@ const resources = {
        'apiUrlDescription': 'Endpoint de la API para obtener viajes',
        'zone': 'Zona',
        'zoneDescription': 'Número de zona enviado en el encabezado de la API',
-       'save': 'Guardar',
-       'settingsSaved': 'Configuración Guardada',
-       'settingsUpdated': 'La configuración de la API se ha actualizado correctamente.',
+        'save': 'Guardar',
+        'settingsSaved': 'Configuración Guardada',
+        'settingsUpdated': 'La configuración de la API se ha actualizado correctamente.',
+        
+        // Modal translations
+        'actionCenter': 'CENTRO DE ACCIONES',
+        'dragVehicle': 'ARRASTRAR VEHÍCULO',
+        'vehicle': 'Vehículo',
+        'select': 'SELECCIONAR',
+        'cancel': 'CANCELAR',
+        'dragCurrentTime': 'Arrastrar solo para este horario',
+        'dragFromTime': 'Arrastrar desde este horario',
+        'dragSameTable': 'Arrastrar desde este horario para la misma tabla en otras rutas',
+        
+        // Toast messages
+        'saveSuccess': '¡Acción guardada exitosamente!',
+        'saveError': 'Error al guardar acción. Inténtalo de nuevo.',
     }
   }
 };
