@@ -246,13 +246,12 @@ const fetchTripsFromAPI = async (): Promise<Trip[]> => {
     // Make the API call with proper headers
     console.log(`Making API call with zone: ${zone}`);
     
-    // Real API integration (commented for now)
-    /*
-    const apiUrl = localStorage.getItem('apiUrl') || '/api/trips';
+    // Real API integration
+    const apiUrl = 'https://planejamento-viagem-api.sinopticoplus.com/planejamento-viagem-api/v1/dashboard/consultar';
     const response = await fetch(apiUrl, {
-      method: 'POST',
+      method: 'PUT',
       headers: {
-        'zone': zone,
+        'Zone': zone,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(payload)
@@ -264,15 +263,6 @@ const fetchTripsFromAPI = async (): Promise<Trip[]> => {
     
     const data: ApiResponse = await response.json();
     return mapApiTripsToTrips(data.viagens);
-    */
-    
-    // For now, simulate API delay and return mock data
-    console.log('Using mock data instead of API (API call commented out)');
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve(mockTrips);
-      }, 500);
-    });
   } catch (error) {
     console.error('Error fetching trips:', error);
     console.log('Falling back to mock data');
