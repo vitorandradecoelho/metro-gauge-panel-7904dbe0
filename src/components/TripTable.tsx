@@ -1,13 +1,13 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Trip, ColumnVisibility } from '@/types/trip';
+import { Trip, ColumnVisibility, SortConfig, SortDirection } from '@/types/trip';
 import { StatusIcon } from './StatusIcon';
 import { TripModal } from './TripModal';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
-import { Eye, MoreVertical, Smartphone, Monitor } from 'lucide-react';
+import { Eye, MoreVertical, Smartphone, Monitor, ChevronUp, ChevronDown, ChevronsUpDown } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 interface TripTableProps {
@@ -19,12 +19,90 @@ export const TripTable = ({ trips, columnVisibility }: TripTableProps) => {
   const { t } = useTranslation();
   const [selectedTrip, setSelectedTrip] = useState<Trip | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
+  const [sortConfig, setSortConfig] = useState<SortConfig>({ field: null, direction: null });
   const isMobile = useIsMobile();
 
   const handleActionClick = (trip: Trip) => {
     setSelectedTrip(trip);
     setModalOpen(true);
   };
+
+  const handleSort = (field: keyof Trip) => {
+    let direction: SortDirection = 'asc';
+    
+    if (sortConfig.field === field) {
+      if (sortConfig.direction === 'asc') {
+        direction = 'desc';
+      } else if (sortConfig.direction === 'desc') {
+        direction = null;
+      } else {
+        direction = 'asc';
+      }
+    }
+    
+    setSortConfig({ field: direction ? field : null, direction });
+  };
+
+  const sortedTrips = useMemo(() => {
+    if (!sortConfig.field || !sortConfig.direction) {
+      return trips;
+    }
+
+    return [...trips].sort((a, b) => {
+      const aValue = a[sortConfig.field!];
+      const bValue = b[sortConfig.field!];
+      
+      // Handle null/undefined values
+      if (aValue == null && bValue == null) return 0;
+      if (aValue == null) return sortConfig.direction === 'asc' ? 1 : -1;
+      if (bValue == null) return sortConfig.direction === 'asc' ? -1 : 1;
+      
+      // Handle different data types
+      if (typeof aValue === 'string' && typeof bValue === 'string') {
+        const result = aValue.localeCompare(bValue);
+        return sortConfig.direction === 'asc' ? result : -result;
+      }
+      
+      if (typeof aValue === 'number' && typeof bValue === 'number') {
+        const result = aValue - bValue;
+        return sortConfig.direction === 'asc' ? result : -result;
+      }
+      
+      // Fallback to string comparison
+      const result = String(aValue).localeCompare(String(bValue));
+      return sortConfig.direction === 'asc' ? result : -result;
+    });
+  }, [trips, sortConfig]);
+
+  const getSortIcon = (field: keyof Trip) => {
+    if (sortConfig.field !== field) {
+      return <ChevronsUpDown className="h-4 w-4 opacity-50" />;
+    }
+    
+    if (sortConfig.direction === 'asc') {
+      return <ChevronUp className="h-4 w-4" />;
+    } else if (sortConfig.direction === 'desc') {
+      return <ChevronDown className="h-4 w-4" />;
+    }
+    
+    return <ChevronsUpDown className="h-4 w-4 opacity-50" />;
+  };
+
+  const SortableHeader = ({ field, children }: { field: keyof Trip; children: React.ReactNode }) => (
+    <th className="p-3 text-left font-medium">
+      <Button
+        variant="ghost"
+        size="sm"
+        className="h-auto p-0 font-medium text-foreground hover:bg-transparent"
+        onClick={() => handleSort(field)}
+      >
+        <span className="flex items-center gap-1">
+          {children}
+          {getSortIcon(field)}
+        </span>
+      </Button>
+    </th>
+  );
 
   const formatTime = (time?: string) => {
     if (!time) return '-';
@@ -57,16 +135,16 @@ export const TripTable = ({ trips, columnVisibility }: TripTableProps) => {
           <table className="w-full text-xs">
             <thead>
               <tr className="border-b bg-muted/50">
-                <th className="p-2 text-left font-medium">{t('status')}</th>
-                <th className="p-2 text-left font-medium">{t('line')}</th>
-                <th className="p-2 text-left font-medium">{t('route')}</th>
-                <th className="p-2 text-left font-medium">{t('date')}</th>
-                <th className="p-2 text-left font-medium">{t('completion')}</th>
+                <SortableHeader field="status">{t('status')}</SortableHeader>
+                <SortableHeader field="line">{t('line')}</SortableHeader>
+                <SortableHeader field="route">{t('route')}</SortableHeader>
+                <SortableHeader field="date">{t('date')}</SortableHeader>
+                <SortableHeader field="completion">{t('completion')}</SortableHeader>
                 <th className="p-2 text-left font-medium">{t('actions')}</th>
               </tr>
             </thead>
             <tbody>
-              {trips.map((trip) => (
+              {sortedTrips.map((trip) => (
                 <tr key={trip.id} className="border-b hover:bg-muted/50 transition-colors">
                   <td className="p-2">
                     <div className="flex items-center">
@@ -115,67 +193,67 @@ export const TripTable = ({ trips, columnVisibility }: TripTableProps) => {
           <thead>
             <tr className="border-b bg-muted/50">
               {columnVisibility.date && (
-                <th className="p-3 text-left font-medium">{t('date')}</th>
+                <SortableHeader field="date">{t('date')}</SortableHeader>
               )}
               {columnVisibility.status && (
-                <th className="p-3 text-left font-medium">{t('status')}</th>
+                <SortableHeader field="status">{t('status')}</SortableHeader>
               )}
               {columnVisibility.line && (
-                <th className="p-3 text-left font-medium">{t('line')}</th>
+                <SortableHeader field="line">{t('line')}</SortableHeader>
               )}
               {columnVisibility.route && (
-                <th className="p-3 text-left font-medium">{t('route')}</th>
+                <SortableHeader field="route">{t('route')}</SortableHeader>
               )}
               {columnVisibility.execution && (
-                <th className="p-3 text-left font-medium">{t('execution')}</th>
+                <SortableHeader field="execution">{t('execution')}</SortableHeader>
               )}
               {columnVisibility.plannedVehicle && (
-                <th className="p-3 text-left font-medium">{t('plannedVehicle')}</th>
+                <SortableHeader field="plannedVehicle">{t('plannedVehicle')}</SortableHeader>
               )}
               {columnVisibility.realVehicle && (
-                <th className="p-3 text-left font-medium">{t('realVehicle')}</th>
+                <SortableHeader field="realVehicle">{t('realVehicle')}</SortableHeader>
               )}
               {columnVisibility.tab && (
-                <th className="p-3 text-left font-medium">{t('tab')}</th>
+                <SortableHeader field="tab">{t('tab')}</SortableHeader>
               )}
               {columnVisibility.passengers && (
-                <th className="p-3 text-left font-medium">{t('passengers')}</th>
+                <SortableHeader field="passengers">{t('passengers')}</SortableHeader>
               )}
               {columnVisibility.plannedStart && (
-                <th className="p-3 text-left font-medium">{t('plannedStart')}</th>
+                <SortableHeader field="plannedStart">{t('plannedStart')}</SortableHeader>
               )}
               {columnVisibility.realStart && (
-                <th className="p-3 text-left font-medium">{t('realStart')}</th>
+                <SortableHeader field="realStart">{t('realStart')}</SortableHeader>
               )}
               {columnVisibility.startDiff && (
-                <th className="p-3 text-left font-medium">{t('startDiff')}</th>
+                <SortableHeader field="startDiff">{t('startDiff')}</SortableHeader>
               )}
               {columnVisibility.plannedEnd && (
-                <th className="p-3 text-left font-medium">{t('plannedEnd')}</th>
+                <SortableHeader field="plannedEnd">{t('plannedEnd')}</SortableHeader>
               )}
               {columnVisibility.realEnd && (
-                <th className="p-3 text-left font-medium">{t('realEnd')}</th>
+                <SortableHeader field="realEnd">{t('realEnd')}</SortableHeader>
               )}
               {columnVisibility.endDiff && (
-                <th className="p-3 text-left font-medium">{t('endDiff')}</th>
+                <SortableHeader field="endDiff">{t('endDiff')}</SortableHeader>
               )}
               {columnVisibility.headway && (
-                <th className="p-3 text-left font-medium">{t('headway')}</th>
+                <SortableHeader field="headway">{t('headway')}</SortableHeader>
               )}
               {columnVisibility.driver && (
-                <th className="p-3 text-left font-medium">{t('driver')}</th>
+                <SortableHeader field="driver">{t('driver')}</SortableHeader>
               )}
               {columnVisibility.travelTime && (
-                <th className="p-3 text-left font-medium">{t('travelTime')}</th>
+                <SortableHeader field="travelTime">{t('travelTime')}</SortableHeader>
               )}
               {columnVisibility.completion && (
-                <th className="p-3 text-left font-medium">{t('completion')}</th>
+                <SortableHeader field="completion">{t('completion')}</SortableHeader>
               )}
               <th className="p-3 text-left font-medium">{t('actions')}</th>
             </tr>
           </thead>
           <tbody>
-            {trips.map((trip) => (
+            {sortedTrips.map((trip) => (
               <tr key={trip.id} className="border-b hover:bg-muted/50 transition-colors">
                 {columnVisibility.date && (
                   <td className="p-3">{trip.date}</td>

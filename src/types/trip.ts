@@ -59,6 +59,13 @@ export interface ColumnVisibility {
   completion: boolean;
 }
 
+export type SortDirection = 'asc' | 'desc' | null;
+
+export interface SortConfig {
+  field: keyof Trip | null;
+  direction: SortDirection;
+}
+
 export const defaultColumnVisibility: ColumnVisibility = {
   date: true,
   status: true,
