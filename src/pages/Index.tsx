@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { TripStatus, ColumnVisibility, defaultColumnVisibility } from '@/types/trip';
+import { TripStatus, ColumnVisibility, defaultColumnVisibility, ColumnKey, defaultColumnOrder } from '@/types/trip';
 import { useTrips } from '@/hooks/useTrips';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
 import { Header } from '@/components/Header';
@@ -21,6 +21,10 @@ const Index = () => {
   const [columnVisibility, setColumnVisibility] = useLocalStorage<ColumnVisibility>(
     'columnVisibility', 
     defaultColumnVisibility
+  );
+  const [columnOrder, setColumnOrder] = useLocalStorage<ColumnKey[]>(
+    'columnOrder',
+    defaultColumnOrder
   );
   
   // Trip data and filtering
@@ -148,6 +152,8 @@ const Index = () => {
             <TripTable
               trips={filteredTrips}
               columnVisibility={columnVisibility}
+              columnOrder={columnOrder}
+              onColumnOrderChange={setColumnOrder}
             />
           </Card>
         )}

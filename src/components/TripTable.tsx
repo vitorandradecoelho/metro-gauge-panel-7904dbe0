@@ -1,26 +1,63 @@
 import { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Trip, ColumnVisibility, SortConfig, SortDirection } from '@/types/trip';
+import { Trip, ColumnVisibility, SortConfig, SortDirection, ColumnKey } from '@/types/trip';
 import { StatusIcon } from './StatusIcon';
 import { TripModal } from './TripModal';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
-import { Eye, MoreVertical, Smartphone, Monitor, ChevronUp, ChevronDown, ChevronsUpDown } from 'lucide-react';
+import { Eye, MoreVertical, Smartphone, Monitor, ChevronUp, ChevronDown, ChevronsUpDown, GripVertical } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  horizontalListSortingStrategy,
+  useSortable,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 
 interface TripTableProps {
   trips: Trip[];
   columnVisibility: ColumnVisibility;
+  columnOrder: ColumnKey[];
+  onColumnOrderChange: (order: ColumnKey[]) => void;
 }
 
-export const TripTable = ({ trips, columnVisibility }: TripTableProps) => {
+export const TripTable = ({ trips, columnVisibility, columnOrder, onColumnOrderChange }: TripTableProps) => {
   const { t } = useTranslation();
   const [selectedTrip, setSelectedTrip] = useState<Trip | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [sortConfig, setSortConfig] = useState<SortConfig>({ field: null, direction: null });
   const isMobile = useIsMobile();
+
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (active.id !== over?.id) {
+      const oldIndex = columnOrder.indexOf(active.id as ColumnKey);
+      const newIndex = columnOrder.indexOf(over?.id as ColumnKey);
+      
+      onColumnOrderChange(arrayMove(columnOrder, oldIndex, newIndex));
+    }
+  };
 
   const handleActionClick = (trip: Trip) => {
     setSelectedTrip(trip);
@@ -88,21 +125,55 @@ export const TripTable = ({ trips, columnVisibility }: TripTableProps) => {
     return <ChevronsUpDown className="h-4 w-4 opacity-50" />;
   };
 
-  const SortableHeader = ({ field, children }: { field: keyof Trip; children: React.ReactNode }) => (
-    <th className="p-3 text-left font-medium">
-      <Button
-        variant="ghost"
-        size="sm"
-        className="h-auto p-0 font-medium text-foreground hover:bg-transparent"
-        onClick={() => handleSort(field)}
+  const DraggableHeader = ({ field, children }: { field: ColumnKey; children: React.ReactNode }) => {
+    const {
+      attributes,
+      listeners,
+      setNodeRef,
+      transform,
+      transition,
+      isDragging,
+    } = useSortable({ id: field });
+
+    const style = {
+      transform: CSS.Transform.toString(transform),
+      transition,
+    };
+
+    if (!columnVisibility[field]) return null;
+
+    return (
+      <th 
+        ref={setNodeRef} 
+        style={style} 
+        className={cn(
+          "p-3 text-left font-medium bg-muted/50 relative",
+          isDragging && "z-50 opacity-50"
+        )}
+        {...attributes}
       >
-        <span className="flex items-center gap-1">
-          {children}
-          {getSortIcon(field)}
-        </span>
-      </Button>
-    </th>
-  );
+        <div className="flex items-center gap-2">
+          <div
+            {...listeners}
+            className="cursor-grab active:cursor-grabbing flex items-center gap-1 opacity-50 hover:opacity-100"
+          >
+            <GripVertical className="h-4 w-4" />
+          </div>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-auto p-0 font-medium text-foreground hover:bg-transparent flex-1 justify-start"
+            onClick={() => handleSort(field as keyof Trip)}
+          >
+            <span className="flex items-center gap-1">
+              {children}
+              {getSortIcon(field as keyof Trip)}
+            </span>
+          </Button>
+        </div>
+      </th>
+    );
+  };
 
   const formatTime = (time?: string) => {
     if (!time) return '-';
@@ -135,11 +206,11 @@ export const TripTable = ({ trips, columnVisibility }: TripTableProps) => {
           <table className="w-full text-xs">
             <thead>
               <tr className="border-b bg-muted/50">
-                <SortableHeader field="status">{t('status')}</SortableHeader>
-                <SortableHeader field="line">{t('line')}</SortableHeader>
-                <SortableHeader field="route">{t('route')}</SortableHeader>
-                <SortableHeader field="date">{t('date')}</SortableHeader>
-                <SortableHeader field="completion">{t('completion')}</SortableHeader>
+                <th className="p-2 text-left font-medium">{t('status')}</th>
+                <th className="p-2 text-left font-medium">{t('line')}</th>
+                <th className="p-2 text-left font-medium">{t('route')}</th>
+                <th className="p-2 text-left font-medium">{t('date')}</th>
+                <th className="p-2 text-left font-medium">{t('completion')}</th>
                 <th className="p-2 text-left font-medium">{t('actions')}</th>
               </tr>
             </thead>
@@ -188,154 +259,105 @@ export const TripTable = ({ trips, columnVisibility }: TripTableProps) => {
   // Desktop Table Layout
   return (
     <>
-      <div className="w-full overflow-auto">
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="border-b bg-muted/50">
-              {columnVisibility.date && (
-                <SortableHeader field="date">{t('date')}</SortableHeader>
-              )}
-              {columnVisibility.status && (
-                <SortableHeader field="status">{t('status')}</SortableHeader>
-              )}
-              {columnVisibility.line && (
-                <SortableHeader field="line">{t('line')}</SortableHeader>
-              )}
-              {columnVisibility.route && (
-                <SortableHeader field="route">{t('route')}</SortableHeader>
-              )}
-              {columnVisibility.execution && (
-                <SortableHeader field="execution">{t('execution')}</SortableHeader>
-              )}
-              {columnVisibility.plannedVehicle && (
-                <SortableHeader field="plannedVehicle">{t('plannedVehicle')}</SortableHeader>
-              )}
-              {columnVisibility.realVehicle && (
-                <SortableHeader field="realVehicle">{t('realVehicle')}</SortableHeader>
-              )}
-              {columnVisibility.tab && (
-                <SortableHeader field="tab">{t('tab')}</SortableHeader>
-              )}
-              {columnVisibility.passengers && (
-                <SortableHeader field="passengers">{t('passengers')}</SortableHeader>
-              )}
-              {columnVisibility.plannedStart && (
-                <SortableHeader field="plannedStart">{t('plannedStart')}</SortableHeader>
-              )}
-              {columnVisibility.realStart && (
-                <SortableHeader field="realStart">{t('realStart')}</SortableHeader>
-              )}
-              {columnVisibility.startDiff && (
-                <SortableHeader field="startDiff">{t('startDiff')}</SortableHeader>
-              )}
-              {columnVisibility.plannedEnd && (
-                <SortableHeader field="plannedEnd">{t('plannedEnd')}</SortableHeader>
-              )}
-              {columnVisibility.realEnd && (
-                <SortableHeader field="realEnd">{t('realEnd')}</SortableHeader>
-              )}
-              {columnVisibility.endDiff && (
-                <SortableHeader field="endDiff">{t('endDiff')}</SortableHeader>
-              )}
-              {columnVisibility.headway && (
-                <SortableHeader field="headway">{t('headway')}</SortableHeader>
-              )}
-              {columnVisibility.driver && (
-                <SortableHeader field="driver">{t('driver')}</SortableHeader>
-              )}
-              {columnVisibility.travelTime && (
-                <SortableHeader field="travelTime">{t('travelTime')}</SortableHeader>
-              )}
-              {columnVisibility.completion && (
-                <SortableHeader field="completion">{t('completion')}</SortableHeader>
-              )}
-              <th className="p-3 text-left font-medium">{t('actions')}</th>
-            </tr>
-          </thead>
-          <tbody>
-            {sortedTrips.map((trip) => (
-              <tr key={trip.id} className="border-b hover:bg-muted/50 transition-colors">
-                {columnVisibility.date && (
-                  <td className="p-3">{trip.date}</td>
-                )}
-                {columnVisibility.status && (
+      <DndContext
+        sensors={sensors}
+        collisionDetection={closestCenter}
+        onDragEnd={handleDragEnd}
+      >
+        <div className="w-full overflow-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <SortableContext items={columnOrder} strategy={horizontalListSortingStrategy}>
+                <tr className="border-b bg-muted/50">
+                  {columnOrder.map((columnKey) => (
+                    <DraggableHeader key={columnKey} field={columnKey}>
+                      {t(columnKey)}
+                    </DraggableHeader>
+                  ))}
+                  <th className="p-3 text-left font-medium bg-muted/50">{t('actions')}</th>
+                </tr>
+              </SortableContext>
+            </thead>
+            <tbody>
+              {sortedTrips.map((trip) => (
+                <tr key={trip.id} className="border-b hover:bg-muted/50 transition-colors">
+                  {columnOrder.map((columnKey) => {
+                    if (!columnVisibility[columnKey]) return null;
+                    
+                    const renderCell = () => {
+                      switch (columnKey) {
+                        case 'date':
+                          return trip.date;
+                        case 'status':
+                          return (
+                            <div className="flex items-center gap-2">
+                              <StatusIcon status={trip.status} />
+                            </div>
+                          );
+                        case 'line':
+                          return <span className="font-medium">{trip.line.substring(0, 5)}...</span>;
+                        case 'route':
+                          return (
+                            <Badge variant="outline" className="text-xs">
+                              {t(trip.route)}
+                            </Badge>
+                          );
+                        case 'execution':
+                          return t(trip.execution);
+                        case 'plannedVehicle':
+                          return trip.plannedVehicle || '-';
+                        case 'realVehicle':
+                          return trip.realVehicle || '-';
+                        case 'tab':
+                          return trip.tab || '-';
+                        case 'passengers':
+                          return trip.passengers || '-';
+                        case 'plannedStart':
+                          return formatTime(trip.plannedStart);
+                        case 'realStart':
+                          return formatTime(trip.realStart);
+                        case 'startDiff':
+                          return trip.startDiff ?? '-';
+                        case 'plannedEnd':
+                          return formatTime(trip.plannedEnd);
+                        case 'realEnd':
+                          return formatTime(trip.realEnd);
+                        case 'endDiff':
+                          return trip.endDiff ?? '-';
+                        case 'headway':
+                          return trip.headway ?? '-';
+                        case 'driver':
+                          return trip.driver || '-';
+                        case 'travelTime':
+                          return trip.travelTime || '-';
+                        case 'completion':
+                          return formatPercentage(trip.completion);
+                        default:
+                          return '-';
+                      }
+                    };
+
+                    return (
+                      <td key={columnKey} className="p-3">
+                        {renderCell()}
+                      </td>
+                    );
+                  })}
                   <td className="p-3">
-                    <div className="flex items-center gap-2">
-                      <StatusIcon status={trip.status} />
-                    </div>
+                    <Button
+                      size="icon-sm"
+                      variant="ghost"
+                      onClick={() => handleActionClick(trip)}
+                    >
+                      <Eye className="h-4 w-4" />
+                    </Button>
                   </td>
-                )}
-                {columnVisibility.line && (
-                  <td className="p-3 font-medium">
-                    {trip.line.substring(0, 5)}...
-                  </td>
-                )}
-                {columnVisibility.route && (
-                  <td className="p-3">
-                    <Badge variant="outline" className="text-xs">
-                      {t(trip.route)}
-                    </Badge>
-                  </td>
-                )}
-                {columnVisibility.execution && (
-                  <td className="p-3">{t(trip.execution)}</td>
-                )}
-                {columnVisibility.plannedVehicle && (
-                  <td className="p-3">{trip.plannedVehicle || '-'}</td>
-                )}
-                {columnVisibility.realVehicle && (
-                  <td className="p-3">{trip.realVehicle || '-'}</td>
-                )}
-                {columnVisibility.tab && (
-                  <td className="p-3">{trip.tab || '-'}</td>
-                )}
-                {columnVisibility.passengers && (
-                  <td className="p-3">{trip.passengers || '-'}</td>
-                )}
-                {columnVisibility.plannedStart && (
-                  <td className="p-3">{formatTime(trip.plannedStart)}</td>
-                )}
-                {columnVisibility.realStart && (
-                  <td className="p-3">{formatTime(trip.realStart)}</td>
-                )}
-                {columnVisibility.startDiff && (
-                  <td className="p-3">{trip.startDiff ?? '-'}</td>
-                )}
-                {columnVisibility.plannedEnd && (
-                  <td className="p-3">{formatTime(trip.plannedEnd)}</td>
-                )}
-                {columnVisibility.realEnd && (
-                  <td className="p-3">{formatTime(trip.realEnd)}</td>
-                )}
-                {columnVisibility.endDiff && (
-                  <td className="p-3">{trip.endDiff ?? '-'}</td>
-                )}
-                {columnVisibility.headway && (
-                  <td className="p-3">{trip.headway ?? '-'}</td>
-                )}
-                {columnVisibility.driver && (
-                  <td className="p-3">{trip.driver || '-'}</td>
-                )}
-                {columnVisibility.travelTime && (
-                  <td className="p-3">{trip.travelTime || '-'}</td>
-                )}
-                {columnVisibility.completion && (
-                  <td className="p-3">{formatPercentage(trip.completion)}</td>
-                )}
-                <td className="p-3">
-                  <Button
-                    size="icon-sm"
-                    variant="ghost"
-                    onClick={() => handleActionClick(trip)}
-                  >
-                    <Eye className="h-4 w-4" />
-                  </Button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </DndContext>
       
       <TripModal 
         isOpen={modalOpen} 

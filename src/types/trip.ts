@@ -66,6 +66,12 @@ export interface SortConfig {
   direction: SortDirection;
 }
 
+export type ColumnKey = keyof ColumnVisibility;
+
+export interface ColumnOrder {
+  order: ColumnKey[];
+}
+
 export const defaultColumnVisibility: ColumnVisibility = {
   date: true,
   status: true,
@@ -87,3 +93,25 @@ export const defaultColumnVisibility: ColumnVisibility = {
   travelTime: true,
   completion: true,
 };
+
+export const defaultColumnOrder: ColumnKey[] = [
+  'date',
+  'status', 
+  'line',
+  'route',
+  'execution',
+  'plannedVehicle',
+  'realVehicle',
+  'tab',
+  'passengers',
+  'plannedStart',
+  'realStart',
+  'startDiff',
+  'plannedEnd',
+  'realEnd',
+  'endDiff',
+  'headway',
+  'driver',
+  'travelTime',
+  'completion'
+];
