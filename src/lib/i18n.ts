@@ -80,11 +80,22 @@ const resources = {
       'english': 'English',
       'español': 'Español (Chile)',
       
-      // Additional messages
-      'loading': 'Carregando',
-      'noTripsFound': 'Nenhuma viagem encontrada',
-      'tryAdjustingFilters': 'Tente ajustar os filtros',
-      'trips': 'viagens',
+       // Additional messages
+       'loading': 'Carregando',
+       'noTripsFound': 'Nenhuma viagem encontrada',
+       'tryAdjustingFilters': 'Tente ajustar os filtros',
+       'trips': 'viagens',
+       
+       // Settings
+       'settings': 'Configurações',
+       'apiSettings': 'Configurações da API',
+       'apiUrl': 'URL da API',
+       'apiUrlDescription': 'Endpoint da API para buscar viagens',
+       'zone': 'Zona',
+       'zoneDescription': 'Número da zona enviado no cabeçalho da API',
+       'save': 'Salvar',
+       'settingsSaved': 'Configurações Salvas',
+       'settingsUpdated': 'As configurações da API foram atualizadas com sucesso.',
     }
   },
   'en': {
@@ -164,11 +175,22 @@ const resources = {
       'english': 'English',
       'español': 'Español (Chile)',
       
-      // Additional messages
-      'loading': 'Loading',
-      'noTripsFound': 'No trips found',
-      'tryAdjustingFilters': 'Try adjusting the filters',
-      'trips': 'trips',
+       // Additional messages
+       'loading': 'Loading',
+       'noTripsFound': 'No trips found',
+       'tryAdjustingFilters': 'Try adjusting the filters',
+       'trips': 'trips',
+       
+       // Settings
+       'settings': 'Settings',
+       'apiSettings': 'API Settings',
+       'apiUrl': 'API URL',
+       'apiUrlDescription': 'URL endpoint for the trips API',
+       'zone': 'Zone',
+       'zoneDescription': 'Zone number to be passed in the API header',
+       'save': 'Save',
+       'settingsSaved': 'Settings Saved',
+       'settingsUpdated': 'API settings have been updated successfully.',
     }
   },
   'es-CL': {
@@ -248,11 +270,22 @@ const resources = {
       'english': 'English',
       'español': 'Español (Chile)',
       
-      // Additional messages
-      'loading': 'Cargando',
-      'noTripsFound': 'No se encontraron viajes',
-      'tryAdjustingFilters': 'Intenta ajustar los filtros',
-      'trips': 'viajes',
+       // Additional messages
+       'loading': 'Cargando',
+       'noTripsFound': 'No se encontraron viajes',
+       'tryAdjustingFilters': 'Intenta ajustar los filtros',
+       'trips': 'viajes',
+       
+       // Settings
+       'settings': 'Configuración',
+       'apiSettings': 'Configuración de API',
+       'apiUrl': 'URL de API',
+       'apiUrlDescription': 'Endpoint de la API para obtener viajes',
+       'zone': 'Zona',
+       'zoneDescription': 'Número de zona enviado en el encabezado de la API',
+       'save': 'Guardar',
+       'settingsSaved': 'Configuración Guardada',
+       'settingsUpdated': 'La configuración de la API se ha actualizado correctamente.',
     }
   }
 };

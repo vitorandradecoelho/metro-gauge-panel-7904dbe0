@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useTheme } from '@/hooks/useTheme';
+import { SettingsDialog } from '@/components/SettingsDialog';
 import { 
   RefreshCw, 
   Filter, 
@@ -114,6 +115,9 @@ export const Header = ({
                 <SelectItem value="es-CL">{t('español')}</SelectItem>
               </SelectContent>
             </Select>
+
+            {/* API Settings */}
+            <SettingsDialog onSettingsSaved={onRefresh} />
 
             {/* Theme Toggle */}
             <Button
