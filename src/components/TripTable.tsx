@@ -50,60 +50,53 @@ export const TripTable = ({ trips, columnVisibility }: TripTableProps) => {
   };
 
   if (isMobile) {
-    // Mobile Card Layout
+    // Mobile Table Layout with simplified columns
     return (
       <>
-        <div className="space-y-3 p-4">
-          {trips.map((trip) => (
-            <Card key={trip.id} className="p-4 space-y-3 shadow-md hover:shadow-lg transition-shadow">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <StatusIcon status={trip.status} />
-                  <Badge className={cn("text-xs", getStatusClassName(trip.status))}>
-                    {t(trip.status)}
-                  </Badge>
-                </div>
-                <Button
-                  size="icon-sm"
-                  variant="ghost"
-                  onClick={() => handleActionClick(trip)}
-                  className="h-8 w-8"
-                >
-                  <Eye className="h-4 w-4" />
-                </Button>
-              </div>
-              
-              <div className="space-y-2">
-                <div className="font-medium text-sm">
-                  {trip.line.substring(0, 5)}...
-                </div>
-                <div className="text-xs text-muted-foreground">
-                  {t(trip.route)} • {trip.date}
-                </div>
-                
-                {trip.passengers !== undefined && (
-                  <div className="text-xs">
-                    <span className="text-muted-foreground">{t('passengers')}: </span>
-                    <span className="font-medium">{trip.passengers}</span>
-                  </div>
-                )}
-                
-                {trip.plannedStart && (
-                  <div className="flex justify-between text-xs">
-                    <span className="text-muted-foreground">{t('plannedStart')}:</span>
-                    <span>{formatTime(trip.plannedStart)}</span>
-                  </div>
-                )}
-                
-                {trip.completion !== undefined && (
-                  <div className="flex justify-between text-xs">
-                    <span className="text-muted-foreground">{t('completion')}:</span>
-                    <span className="font-medium">{formatPercentage(trip.completion)}</span>
-                  </div>
-                )}
-              </div>
-            </Card>
-          ))}
+        <div className="w-full overflow-auto p-2">
+          <table className="w-full text-xs">
+            <thead>
+              <tr className="border-b bg-muted/50">
+                <th className="p-2 text-left font-medium">{t('status')}</th>
+                <th className="p-2 text-left font-medium">{t('line')}</th>
+                <th className="p-2 text-left font-medium">{t('route')}</th>
+                <th className="p-2 text-left font-medium">{t('date')}</th>
+                <th className="p-2 text-left font-medium">{t('completion')}</th>
+                <th className="p-2 text-left font-medium">{t('actions')}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {trips.map((trip) => (
+                <tr key={trip.id} className="border-b hover:bg-muted/50 transition-colors">
+                  <td className="p-2">
+                    <div className="flex items-center">
+                      <StatusIcon status={trip.status} />
+                    </div>
+                  </td>
+                  <td className="p-2 font-medium">
+                    {trip.line.substring(0, 5)}...
+                  </td>
+                  <td className="p-2">
+                    <Badge variant="outline" className="text-xs">
+                      {t(trip.route)}
+                    </Badge>
+                  </td>
+                  <td className="p-2">{trip.date}</td>
+                  <td className="p-2">{formatPercentage(trip.completion)}</td>
+                  <td className="p-2">
+                    <Button
+                      size="icon-sm"
+                      variant="ghost"
+                      onClick={() => handleActionClick(trip)}
+                      className="h-6 w-6"
+                    >
+                      <Eye className="h-3 w-3" />
+                    </Button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
         
         <TripModal 
