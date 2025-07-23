@@ -46,17 +46,10 @@ export const Header = ({
     <header className="sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b shadow-sm">
       <div className="container mx-auto px-4 py-3">
         <div className="flex items-center justify-between gap-2 sm:gap-4 min-w-0">
-          {/* Logo and Title */}
-          <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
-            <div className="flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 bg-primary rounded-lg flex-shrink-0">
-              <Bus className="h-4 w-4 sm:h-6 sm:w-6 text-primary-foreground" />
-            </div>
-            <div className="min-w-0 flex-1">
-              <h1 className="text-lg sm:text-xl font-bold text-foreground truncate">{t('title')}</h1>
-              <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                {isMobile ? <Smartphone className="h-3 w-3 flex-shrink-0" /> : <Monitor className="h-3 w-3 flex-shrink-0" />}
-                <span className="truncate">{isMobile ? 'Mobile' : 'Desktop'}</span>
-              </div>
+          {/* Logo */}
+          <div className="flex items-center gap-2 flex-shrink-0">
+            <div className="flex items-center justify-center w-8 h-8 bg-primary rounded-lg">
+              <Bus className="h-4 w-4 text-primary-foreground" />
             </div>
           </div>
 
@@ -88,17 +81,15 @@ export const Header = ({
               )}
             </Button>
 
-            {/* Column Visibility Toggle - Only show on desktop */}
-            {!isMobile && (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={onToggleColumnVisibility}
-              >
-                <EyeOff className="h-4 w-4" />
-                <span className="ml-2">{t('hideColumns')}</span>
-              </Button>
-            )}
+            {/* Column Visibility Toggle */}
+            <Button
+              variant="outline"
+              size={isMobile ? "icon" : "sm"}
+              onClick={onToggleColumnVisibility}
+            >
+              <EyeOff className="h-4 w-4" />
+              {!isMobile && <span className="ml-2">{t('hideColumns')}</span>}
+            </Button>
 
             {/* Language Selector */}
             <Select
