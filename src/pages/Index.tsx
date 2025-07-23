@@ -11,6 +11,7 @@ import { ColumnVisibilityPanel } from '@/components/ColumnVisibilityPanel';
 import { Card } from '@/components/ui/card';
 import { Loader2, Wifi, WifiOff, AlertCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { AuthStatus } from '@/components/AuthStatus';
 
 const Index = () => {
   const { t } = useTranslation();
@@ -99,6 +100,11 @@ const Index = () => {
         onToggleFilters={() => setShowFilters(!showFilters)}
         onToggleColumnVisibility={() => setShowColumnPanel(!showColumnPanel)}
       />
+
+      {/* Auth Status */}
+      <div className="container mx-auto px-4 pt-6">
+        <AuthStatus />
+      </div>
 
       {/* Connection Status Indicator */}
       <div className="flex items-center justify-center py-2 bg-muted/50 border-b">

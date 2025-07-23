@@ -157,13 +157,15 @@ const mapApiTripsToTrips = (apiTrips: ApiTrip[]): Trip[] => {
 
 // Fetch trips from API or fallback to mock data
 const fetchTripsFromAPI = async (): Promise<Trip[]> => {
-  // Get zone from localStorage
-  const zone = localStorage.getItem('zone') || '4';
+  const api = (await import('@/services/api')).default;
+  const { getClienteLocalStorage } = await import('@/services/localStorage');
   
   try {
     // Create the date for today in the required format
     const today = new Date();
     const formattedDate = today.toISOString().split('T')[0]; // YYYY-MM-DD
+    
+    const cliente = getClienteLocalStorage();
     
     // Create the API request payload
     const payload: ApiRequestPayload = {
@@ -237,31 +239,15 @@ const fetchTripsFromAPI = async (): Promise<Trip[]> => {
           numeroLinha: "01"
         }
       ],
-      idCliente: 1307,
+      idCliente: cliente.idCliente || 1307,
       ordenacao: "horario",
-      timezone: "America/Fortaleza",
-      inicioDiaOperacional: "00:00:00"
+      timezone: cliente.gmtCliente || "America/Fortaleza",
+      inicioDiaOperacional: cliente.inicioDiaOperacional || "00:00:00"
     };
 
-    // Make the API call with proper headers
-    console.log(`Making API call with zone: ${zone}`);
-    
-    // Real API integration
-    const apiUrl = 'https://planejamento-viagem-api.sinopticoplus.com/planejamento-viagem-api/v1/dashboard/consultar';
-    const response = await fetch(apiUrl, {
-      method: 'PUT',
-      headers: {
-        'Zone': zone,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(payload)
-    });
-    
-    if (!response.ok) {
-      throw new Error(`API error: ${response.status}`);
-    }
-    
-    const data: ApiResponse = await response.json();
+    // Make the API call using the authenticated api service
+    const response = await api.put('/dashboard/consultar', payload);
+    const data: ApiResponse = response.data;
     return mapApiTripsToTrips(data.viagens);
   } catch (error) {
     console.error('Error fetching trips:', error);
