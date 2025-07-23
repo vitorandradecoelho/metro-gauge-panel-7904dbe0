@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { useEffect, useState } from "react";
 import Index from "./pages/Index";
+import TripEdit from "./pages/TripEdit";
 import NotFound from "./pages/NotFound";
 import "@/lib/i18n";
 import { initializeZone } from "@/hooks/useLocalStorage";
@@ -62,6 +63,7 @@ const App = () => {
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Index />} />
+            <Route path="/trip-edit" element={<TripEdit />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

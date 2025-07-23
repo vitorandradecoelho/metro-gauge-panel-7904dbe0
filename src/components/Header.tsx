@@ -14,7 +14,8 @@ import {
   EyeOff,
   Monitor,
   Smartphone,
-  Bus
+  Bus,
+  Plus
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -89,6 +90,16 @@ export const Header = ({
             >
               <EyeOff className="h-4 w-4" />
               {!isMobile && <span className="ml-2">{t('hideColumns')}</span>}
+            </Button>
+
+            {/* Trip Edit Button */}
+            <Button
+              variant="outline"
+              size={isMobile ? "icon" : "sm"}
+              onClick={() => window.open('/trip-edit', '_blank')}
+            >
+              <Plus className="h-4 w-4" />
+              {!isMobile && <span className="ml-2">Editar Viagens</span>}
             </Button>
 
             {/* Language Selector */}
