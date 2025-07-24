@@ -199,39 +199,59 @@ export const TripTable = ({ trips, columnVisibility, columnOrder, onColumnOrderC
   };
 
   if (isMobile) {
-    // Mobile Table Layout with simplified columns
+    // Mobile Table Layout with configurable columns
+    const mobileColumns: ColumnKey[] = ['status', 'line', 'route', 'date', 'completion'];
+    const visibleMobileColumns = mobileColumns.filter(col => columnVisibility[col]);
+    
     return (
       <>
         <div className="w-full overflow-auto p-2">
           <table className="w-full text-xs">
             <thead>
               <tr className="border-b bg-muted/50">
-                <th className="p-2 text-left font-medium">{t('status')}</th>
-                <th className="p-2 text-left font-medium">{t('line')}</th>
-                <th className="p-2 text-left font-medium">{t('route')}</th>
-                <th className="p-2 text-left font-medium">{t('date')}</th>
-                <th className="p-2 text-left font-medium">{t('completion')}</th>
+                {visibleMobileColumns.map((columnKey) => (
+                  <th key={columnKey} className="p-2 text-left font-medium">
+                    {t(columnKey)}
+                  </th>
+                ))}
                 <th className="p-2 text-left font-medium">{t('actions')}</th>
               </tr>
             </thead>
             <tbody>
               {sortedTrips.map((trip) => (
                 <tr key={trip.id} className="border-b hover:bg-muted/50 transition-colors">
-                  <td className="p-2">
-                    <div className="flex items-center">
-                      <StatusIcon status={trip.status} />
-                    </div>
-                  </td>
-                  <td className="p-2 font-medium">
-                    {trip.line.substring(0, 5)}...
-                  </td>
-                  <td className="p-2">
-                    <Badge variant="outline" className="text-xs">
-                      {t(trip.route)}
-                    </Badge>
-                  </td>
-                  <td className="p-2">{trip.date}</td>
-                  <td className="p-2">{formatPercentage(trip.completion)}</td>
+                  {visibleMobileColumns.map((columnKey) => {
+                    const renderCell = () => {
+                      switch (columnKey) {
+                        case 'status':
+                          return (
+                            <div className="flex items-center">
+                              <StatusIcon status={trip.status} />
+                            </div>
+                          );
+                        case 'line':
+                          return <span className="font-medium">{trip.line.substring(0, 5)}...</span>;
+                        case 'route':
+                          return (
+                            <Badge variant="outline" className="text-xs">
+                              {t(trip.route)}
+                            </Badge>
+                          );
+                        case 'date':
+                          return trip.date;
+                        case 'completion':
+                          return formatPercentage(trip.completion);
+                        default:
+                          return '-';
+                      }
+                    };
+
+                    return (
+                      <td key={columnKey} className="p-2">
+                        {renderCell()}
+                      </td>
+                    );
+                  })}
                   <td className="p-2">
                     <Button
                       size="icon-sm"
