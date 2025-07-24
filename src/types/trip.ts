@@ -35,6 +35,12 @@ export interface FilterOptions {
   line: string;
   route: string;
   consortium: string;
+  startDate: string;
+  startTime: string;
+  endDate: string;
+  endTime: string;
+  realTimeEnabled: boolean;
+  realTimeMinutes: number;
 }
 
 export interface ColumnVisibility {

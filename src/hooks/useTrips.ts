@@ -264,6 +264,12 @@ export const useTrips = (): UseTripsReturn => {
     line: '',
     route: '',
     consortium: '',
+    startDate: '',
+    startTime: '',
+    endDate: '',
+    endTime: '',
+    realTimeEnabled: false,
+    realTimeMinutes: 30,
   });
   const [activeStatus, setActiveStatus] = useState<TripStatus | 'all'>('all');
 

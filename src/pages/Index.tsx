@@ -125,6 +125,7 @@ const Index = () => {
       <TripFilters
         filters={filters}
         onFiltersChange={setFilters}
+        onConsult={() => refreshTrips()}
         isVisible={showFilters}
       />
 
