@@ -309,6 +309,70 @@ export const useTrips = (): UseTripsReturn => {
       return false;
     }
 
+    // Date and time filters
+    if (filters.realTimeEnabled) {
+      // Real-time filter: get trips from (current time - minutes) to current time
+      const now = new Date();
+      const cutoffTime = new Date(now.getTime() - (filters.realTimeMinutes * 60 * 1000));
+      
+      // Check planned start time
+      if (trip.plannedStart) {
+        const plannedStartDate = new Date(`${trip.date}T${trip.plannedStart}`);
+        if (plannedStartDate < cutoffTime || plannedStartDate > now) {
+          return false;
+        }
+      }
+      
+      // Check real start time if available
+      if (trip.realStart) {
+        const realStartDate = new Date(`${trip.date}T${trip.realStart}`);
+        if (realStartDate < cutoffTime || realStartDate > now) {
+          return false;
+        }
+      }
+    } else {
+      // Manual date/time range filters
+      if (filters.startDate && filters.startTime) {
+        const filterStartDateTime = new Date(`${filters.startDate}T${filters.startTime}`);
+        
+        // Check against planned start
+        if (trip.plannedStart) {
+          const plannedStartDate = new Date(`${trip.date}T${trip.plannedStart}`);
+          if (plannedStartDate < filterStartDateTime) {
+            return false;
+          }
+        }
+        
+        // Check against real start if available
+        if (trip.realStart) {
+          const realStartDate = new Date(`${trip.date}T${trip.realStart}`);
+          if (realStartDate < filterStartDateTime) {
+            return false;
+          }
+        }
+      }
+      
+      if (filters.endDate && filters.endTime) {
+        const filterEndDateTime = new Date(`${filters.endDate}T${filters.endTime}`);
+        
+        // Check against planned start
+        if (trip.plannedStart) {
+          const plannedStartDate = new Date(`${trip.date}T${trip.plannedStart}`);
+          if (plannedStartDate > filterEndDateTime) {
+            return false;
+          }
+        }
+        
+        // Check against real start if available
+        if (trip.realStart) {
+          const realStartDate = new Date(`${trip.date}T${trip.realStart}`);
+          if (realStartDate > filterEndDateTime) {
+            return false;
+          }
+        }
+      }
+    }
+
     return true;
   });
 

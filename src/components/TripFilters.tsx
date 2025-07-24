@@ -116,57 +116,59 @@ export const TripFilters = ({ filters, onFiltersChange, onConsult, isVisible }: 
         </div>
 
         {/* Date and Time Filters */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="space-y-4">
-            <h4 className="text-sm font-semibold text-foreground flex items-center gap-2">
-              <Calendar className="h-4 w-4" />
-              Data/Hora Inicial
-            </h4>
-            <div className="grid grid-cols-2 gap-2">
-              <div className="space-y-2">
-                <label className="text-xs text-muted-foreground">Data</label>
-                <Input
-                  type="date"
-                  value={filters.startDate}
-                  onChange={(e) => handleFilterChange('startDate', e.target.value)}
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-xs text-muted-foreground">Hora</label>
-                <Input
-                  type="time"
-                  value={filters.startTime}
-                  onChange={(e) => handleFilterChange('startTime', e.target.value)}
-                />
+        {!filters.realTimeEnabled && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-4">
+              <h4 className="text-sm font-semibold text-foreground flex items-center gap-2">
+                <Calendar className="h-4 w-4" />
+                Data/Hora Inicial
+              </h4>
+              <div className="grid grid-cols-2 gap-2">
+                <div className="space-y-2">
+                  <label className="text-xs text-muted-foreground">Data</label>
+                  <Input
+                    type="date"
+                    value={filters.startDate}
+                    onChange={(e) => handleFilterChange('startDate', e.target.value)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-xs text-muted-foreground">Hora</label>
+                  <Input
+                    type="time"
+                    value={filters.startTime}
+                    onChange={(e) => handleFilterChange('startTime', e.target.value)}
+                  />
+                </div>
               </div>
             </div>
-          </div>
 
-          <div className="space-y-4">
-            <h4 className="text-sm font-semibold text-foreground flex items-center gap-2">
-              <Clock className="h-4 w-4" />
-              Data/Hora Final
-            </h4>
-            <div className="grid grid-cols-2 gap-2">
-              <div className="space-y-2">
-                <label className="text-xs text-muted-foreground">Data</label>
-                <Input
-                  type="date"
-                  value={filters.endDate}
-                  onChange={(e) => handleFilterChange('endDate', e.target.value)}
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-xs text-muted-foreground">Hora</label>
-                <Input
-                  type="time"
-                  value={filters.endTime}
-                  onChange={(e) => handleFilterChange('endTime', e.target.value)}
-                />
+            <div className="space-y-4">
+              <h4 className="text-sm font-semibold text-foreground flex items-center gap-2">
+                <Clock className="h-4 w-4" />
+                Data/Hora Final
+              </h4>
+              <div className="grid grid-cols-2 gap-2">
+                <div className="space-y-2">
+                  <label className="text-xs text-muted-foreground">Data</label>
+                  <Input
+                    type="date"
+                    value={filters.endDate}
+                    onChange={(e) => handleFilterChange('endDate', e.target.value)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-xs text-muted-foreground">Hora</label>
+                  <Input
+                    type="time"
+                    value={filters.endTime}
+                    onChange={(e) => handleFilterChange('endTime', e.target.value)}
+                  />
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        )}
 
         {/* Real Time Option */}
         <div className="border-t pt-4">
@@ -176,24 +178,30 @@ export const TripFilters = ({ filters, onFiltersChange, onConsult, isVisible }: 
               onCheckedChange={(checked) => handleFilterChange('realTimeEnabled', checked)}
             />
             <label className="text-sm font-medium text-foreground">
-              Tempo Real
+              Filtro Tempo Real
             </label>
           </div>
           
           {filters.realTimeEnabled && (
-            <div className="ml-6 space-y-2">
+            <div className="ml-6 space-y-2 bg-muted/50 p-3 rounded-md">
               <label className="text-xs text-muted-foreground">
-                Minutos anteriores à hora atual
+                Buscar viagens dos últimos X minutos (partida real e planejada)
               </label>
-              <Input
-                type="number"
-                min="1"
-                max="1440"
-                value={filters.realTimeMinutes}
-                onChange={(e) => handleFilterChange('realTimeMinutes', parseInt(e.target.value) || 0)}
-                className="w-32"
-                placeholder="Ex: 30"
-              />
+              <div className="flex items-center gap-2">
+                <Input
+                  type="number"
+                  min="1"
+                  max="1440"
+                  value={filters.realTimeMinutes}
+                  onChange={(e) => handleFilterChange('realTimeMinutes', parseInt(e.target.value) || 30)}
+                  className="w-20"
+                  placeholder="30"
+                />
+                <span className="text-xs text-muted-foreground">minutos atrás</span>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Aplica filtro nos horários de partida real e partida planejada das viagens
+              </p>
             </div>
           )}
         </div>
