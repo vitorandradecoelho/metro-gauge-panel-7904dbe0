@@ -118,13 +118,18 @@ export const TripFilters = ({ filters, onFiltersChange, onConsult, isVisible }: 
               <SelectContent className="max-h-60 bg-popover border shadow-lg z-50">
                 <SelectItem value="all">{t('allLines')}</SelectItem>
                 {loadingLines ? (
-                  <SelectItem value="" disabled>Carregando linhas...</SelectItem>
+                  <SelectItem value="loading" disabled>Carregando linhas...</SelectItem>
                 ) : (
-                  lines.map((line) => (
-                    <SelectItem key={line.id} value={`${line.numero} - ${line.descr}`}>
-                      {line.numero} - {line.descr.substring(0, 30)}{line.descr.length > 30 ? '...' : ''}
-                    </SelectItem>
-                  ))
+                  lines
+                    .filter(line => line.numero && line.descr) // Filter out items with empty values
+                    .map((line) => {
+                      const value = `${line.numero} - ${line.descr}`;
+                      return (
+                        <SelectItem key={line.id || line._id} value={value}>
+                          {line.numero} - {line.descr.substring(0, 30)}{line.descr.length > 30 ? '...' : ''}
+                        </SelectItem>
+                      );
+                    })
                 )}
               </SelectContent>
             </Select>
@@ -145,11 +150,14 @@ export const TripFilters = ({ filters, onFiltersChange, onConsult, isVisible }: 
               </SelectTrigger>
               <SelectContent className="max-h-60 bg-popover border shadow-lg z-50">
                 <SelectItem value="all">Todos os Trajetos</SelectItem>
-                {availableTrajetos.map((trajeto) => (
-                  <SelectItem key={trajeto._id} value={trajeto.nome}>
-                    {trajeto.nomeExibicao} ({trajeto.sentido})
-                  </SelectItem>
-                ))}
+                {availableTrajetos
+                  .filter(trajeto => trajeto.nome && trajeto.nomeExibicao) // Filter out items with empty values
+                  .map((trajeto) => (
+                    <SelectItem key={trajeto._id} value={trajeto.nome || trajeto.nomeExibicao}>
+                      {trajeto.nomeExibicao} ({trajeto.sentido})
+                    </SelectItem>
+                  ))
+                }
               </SelectContent>
             </Select>
           </div>
