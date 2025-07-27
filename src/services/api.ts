@@ -27,4 +27,12 @@ api.interceptors.response.use(
   }
 );
 
+// API service functions
+export const linesService = {
+  getLines: async () => {
+    const response = await api.get('/service-api/linhasTrajetos/1241');
+    return response.data;
+  }
+};
+
 export default api;

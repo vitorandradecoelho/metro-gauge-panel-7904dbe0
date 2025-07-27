@@ -1,6 +1,8 @@
 import { useTranslation } from 'react-i18next';
 import { FilterOptions } from '@/types/trip';
-import { getUniqueLines, getUniqueRoutes, getUniqueConsortiums } from '@/data/mockData';
+import { getUniqueRoutes, getUniqueConsortiums } from '@/data/mockData';
+import { linesService } from '@/services/api';
+import { useState, useEffect } from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -15,12 +17,38 @@ interface TripFiltersProps {
   isVisible: boolean;
 }
 
+interface LineData {
+  _id: string;
+  numero: string;
+  descr: string;
+  id: string;
+}
+
 export const TripFilters = ({ filters, onFiltersChange, onConsult, isVisible }: TripFiltersProps) => {
   const { t } = useTranslation();
+  
+  const [lines, setLines] = useState<LineData[]>([]);
+  const [loadingLines, setLoadingLines] = useState(false);
 
-  const uniqueLines = getUniqueLines();
   const uniqueRoutes = getUniqueRoutes();
   const uniqueConsortiums = getUniqueConsortiums();
+
+  useEffect(() => {
+    const fetchLines = async () => {
+      try {
+        setLoadingLines(true);
+        const linesData = await linesService.getLines();
+        setLines(linesData);
+      } catch (error) {
+        console.error('Error fetching lines:', error);
+        setLines([]);
+      } finally {
+        setLoadingLines(false);
+      }
+    };
+
+    fetchLines();
+  }, []);
 
   const handleFilterChange = (key: keyof FilterOptions, value: string | boolean | number) => {
     onFiltersChange({
@@ -59,11 +87,15 @@ export const TripFilters = ({ filters, onFiltersChange, onConsult, isVisible }: 
               </SelectTrigger>
               <SelectContent className="max-h-60">
                 <SelectItem value="all">{t('allLines')}</SelectItem>
-                {uniqueLines.map((line) => (
-                  <SelectItem key={line} value={line}>
-                    {line.substring(0, 15)}...
-                  </SelectItem>
-                ))}
+                {loadingLines ? (
+                  <SelectItem value="" disabled>Carregando linhas...</SelectItem>
+                ) : (
+                  lines.map((line) => (
+                    <SelectItem key={line.id} value={`${line.numero} - ${line.descr}`}>
+                      {line.numero} - {line.descr.substring(0, 30)}{line.descr.length > 30 ? '...' : ''}
+                    </SelectItem>
+                  ))
+                )}
               </SelectContent>
             </Select>
           </div>
