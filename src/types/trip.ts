@@ -34,6 +34,7 @@ export type ExecutionStatus = 'Fechada' | 'Aberta' | 'Não Iniciada';
 export interface FilterOptions {
   line: string;
   route: string;
+  trajeto: string;
   consortium: string;
   startDate: string;
   startTime: string;

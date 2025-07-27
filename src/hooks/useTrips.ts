@@ -263,6 +263,7 @@ export const useTrips = (): UseTripsReturn => {
   const [filters, setFilters] = useState<FilterOptions>({
     line: '',
     route: '',
+    trajeto: '',
     consortium: '',
     startDate: '',
     startTime: '',

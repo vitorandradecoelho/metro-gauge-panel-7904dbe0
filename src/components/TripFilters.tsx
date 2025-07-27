@@ -21,7 +21,15 @@ interface LineData {
   _id: string;
   numero: string;
   descr: string;
+  trajetos: TrajetoData[];
   id: string;
+}
+
+interface TrajetoData {
+  _id: string;
+  nome: string;
+  sentido: string;
+  nomeExibicao: string;
 }
 
 export const TripFilters = ({ filters, onFiltersChange, onConsult, isVisible }: TripFiltersProps) => {
@@ -29,6 +37,7 @@ export const TripFilters = ({ filters, onFiltersChange, onConsult, isVisible }: 
   
   const [lines, setLines] = useState<LineData[]>([]);
   const [loadingLines, setLoadingLines] = useState(false);
+  const [availableTrajetos, setAvailableTrajetos] = useState<TrajetoData[]>([]);
 
   const uniqueRoutes = getUniqueRoutes();
   const uniqueConsortiums = getUniqueConsortiums();
@@ -57,6 +66,27 @@ export const TripFilters = ({ filters, onFiltersChange, onConsult, isVisible }: 
     });
   };
 
+  // Update available trajetos when line selection changes
+  useEffect(() => {
+    if (filters.line) {
+      const selectedLine = lines.find(line => 
+        `${line.numero} - ${line.descr}` === filters.line
+      );
+      
+      if (selectedLine) {
+        setAvailableTrajetos(selectedLine.trajetos || []);
+      } else {
+        setAvailableTrajetos([]);
+      }
+    } else {
+      setAvailableTrajetos([]);
+      // Clear trajeto selection when line is cleared
+      if (filters.trajeto) {
+        handleFilterChange('trajeto', '');
+      }
+    }
+  }, [filters.line, lines]);
+
   const handleConsult = () => {
     onConsult?.();
   };
@@ -72,7 +102,7 @@ export const TripFilters = ({ filters, onFiltersChange, onConsult, isVisible }: 
       
       <div className="space-y-6">
         {/* Basic Filters */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {/* Line Filter */}
           <div className="space-y-2">
             <label className="text-sm font-medium text-muted-foreground">
@@ -85,7 +115,7 @@ export const TripFilters = ({ filters, onFiltersChange, onConsult, isVisible }: 
               <SelectTrigger className="w-full">
                 <SelectValue placeholder={t('selectLine')} />
               </SelectTrigger>
-              <SelectContent className="max-h-60">
+              <SelectContent className="max-h-60 bg-popover border shadow-lg z-50">
                 <SelectItem value="all">{t('allLines')}</SelectItem>
                 {loadingLines ? (
                   <SelectItem value="" disabled>Carregando linhas...</SelectItem>
@@ -100,7 +130,29 @@ export const TripFilters = ({ filters, onFiltersChange, onConsult, isVisible }: 
             </Select>
           </div>
 
-          {/* Route Filter */}
+          {/* Trajeto Filter */}
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-muted-foreground">
+              Trajeto
+            </label>
+            <Select
+              value={filters.trajeto || 'all'}
+              onValueChange={(value) => handleFilterChange('trajeto', value)}
+              disabled={!filters.line || filters.line === 'all' || availableTrajetos.length === 0}
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Selecione um trajeto" />
+              </SelectTrigger>
+              <SelectContent className="max-h-60 bg-popover border shadow-lg z-50">
+                <SelectItem value="all">Todos os Trajetos</SelectItem>
+                {availableTrajetos.map((trajeto) => (
+                  <SelectItem key={trajeto._id} value={trajeto.nome}>
+                    {trajeto.nomeExibicao} ({trajeto.sentido})
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
           <div className="space-y-2">
             <label className="text-sm font-medium text-muted-foreground">
               {t('filterRoute')}
@@ -112,7 +164,7 @@ export const TripFilters = ({ filters, onFiltersChange, onConsult, isVisible }: 
               <SelectTrigger className="w-full">
                 <SelectValue placeholder={t('selectRoute')} />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="bg-popover border shadow-lg z-50">
                 <SelectItem value="all">{t('allRoutes')}</SelectItem>
                 {uniqueRoutes.map((route) => (
                   <SelectItem key={route} value={route}>
@@ -135,7 +187,7 @@ export const TripFilters = ({ filters, onFiltersChange, onConsult, isVisible }: 
               <SelectTrigger className="w-full">
                 <SelectValue placeholder={t('selectConsortium')} />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="bg-popover border shadow-lg z-50">
                 <SelectItem value="all">{t('allConsortiums')}</SelectItem>
                 {uniqueConsortiums.map((consortium) => (
                   <SelectItem key={consortium} value={consortium}>
