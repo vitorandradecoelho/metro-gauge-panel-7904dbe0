@@ -6,6 +6,7 @@ import { TripModal } from './TripModal';
 import { TripRegistrationModal } from './TripRegistrationModal';
 import { TripObservationModal } from './TripObservationModal';
 import { TripDeleteModal } from './TripDeleteModal';
+import { EditScheduleModal } from './EditScheduleModal';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
@@ -17,7 +18,7 @@ import {
   DropdownMenuSeparator
 } from '@/components/ui/dropdown-menu';
 import { cn } from '@/lib/utils';
-import { Eye, MoreVertical, Smartphone, Monitor, ChevronUp, ChevronDown, ChevronsUpDown, GripVertical, Edit, Delete, Copy, MessageSquare } from 'lucide-react';
+import { Eye, MoreVertical, Smartphone, Monitor, ChevronUp, ChevronDown, ChevronsUpDown, GripVertical, Edit, Delete, Copy, MessageSquare, Clock } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import {
   DndContext,
@@ -51,6 +52,7 @@ export const TripTable = ({ trips, columnVisibility, columnOrder, onColumnOrderC
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [observationModalOpen, setObservationModalOpen] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [editScheduleModalOpen, setEditScheduleModalOpen] = useState(false);
   const [sortConfig, setSortConfig] = useState<SortConfig>({ field: null, direction: null });
   const isMobile = useIsMobile();
 
@@ -85,6 +87,9 @@ export const TripTable = ({ trips, columnVisibility, columnOrder, onColumnOrderC
         break;
       case 'observation':
         setObservationModalOpen(true);
+        break;
+      case 'editSchedule':
+        setEditScheduleModalOpen(true);
         break;
       case 'duplicate':
         // TODO: Implementar duplicação
@@ -310,6 +315,12 @@ export const TripTable = ({ trips, columnVisibility, columnOrder, onColumnOrderC
                           <MessageSquare className="h-3 w-3 mr-2" />
                           Incluir Observação
                         </DropdownMenuItem>
+                        {trip.status === 'NÃO INICIADA' && (
+                          <DropdownMenuItem onClick={() => handleActionClick(trip, 'editSchedule')}>
+                            <Clock className="h-3 w-3 mr-2" />
+                            Editar Horário
+                          </DropdownMenuItem>
+                        )}
                         <DropdownMenuItem onClick={() => handleActionClick(trip, 'duplicate')}>
                           <Copy className="h-3 w-3 mr-2" />
                           {t('duplicate')}
@@ -352,6 +363,11 @@ export const TripTable = ({ trips, columnVisibility, columnOrder, onColumnOrderC
         isOpen={deleteModalOpen} 
         onClose={() => setDeleteModalOpen(false)}
         trip={selectedTrip}
+      />
+      
+      <EditScheduleModal 
+        isOpen={editScheduleModalOpen} 
+        onClose={() => setEditScheduleModalOpen(false)}
       />
     </>
   );
@@ -467,6 +483,12 @@ export const TripTable = ({ trips, columnVisibility, columnOrder, onColumnOrderC
                           <MessageSquare className="h-4 w-4 mr-2" />
                           Incluir Observação
                         </DropdownMenuItem>
+                        {trip.status === 'NÃO INICIADA' && (
+                          <DropdownMenuItem onClick={() => handleActionClick(trip, 'editSchedule')}>
+                            <Clock className="h-4 w-4 mr-2" />
+                            Editar Horário
+                          </DropdownMenuItem>
+                        )}
                         <DropdownMenuItem onClick={() => handleActionClick(trip, 'duplicate')}>
                           <Copy className="h-4 w-4 mr-2" />
                           {t('duplicate')}
@@ -510,6 +532,11 @@ export const TripTable = ({ trips, columnVisibility, columnOrder, onColumnOrderC
           isOpen={deleteModalOpen} 
           onClose={() => setDeleteModalOpen(false)}
           trip={selectedTrip}
+        />
+        
+        <EditScheduleModal 
+          isOpen={editScheduleModalOpen} 
+          onClose={() => setEditScheduleModalOpen(false)}
         />
       </>
     );
