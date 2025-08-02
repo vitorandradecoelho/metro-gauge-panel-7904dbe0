@@ -5,6 +5,7 @@ import { StatusIcon } from './StatusIcon';
 import { TripModal } from './TripModal';
 import { TripRegistrationModal } from './TripRegistrationModal';
 import { TripObservationModal } from './TripObservationModal';
+import { TripDeleteModal } from './TripDeleteModal';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
@@ -49,6 +50,7 @@ export const TripTable = ({ trips, columnVisibility, columnOrder, onColumnOrderC
   const [modalOpen, setModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [observationModalOpen, setObservationModalOpen] = useState(false);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [sortConfig, setSortConfig] = useState<SortConfig>({ field: null, direction: null });
   const isMobile = useIsMobile();
 
@@ -89,8 +91,7 @@ export const TripTable = ({ trips, columnVisibility, columnOrder, onColumnOrderC
         console.log('Duplicar viagem:', trip);
         break;
       case 'delete':
-        // TODO: Implementar exclusão
-        console.log('Excluir viagem:', trip);
+        setDeleteModalOpen(true);
         break;
       default:
         break;
@@ -319,7 +320,7 @@ export const TripTable = ({ trips, columnVisibility, columnOrder, onColumnOrderC
                           className="text-destructive focus:text-destructive"
                         >
                           <Delete className="h-3 w-3 mr-2" />
-                          {t('delete')}
+                          Excluir Viagem
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
@@ -344,6 +345,12 @@ export const TripTable = ({ trips, columnVisibility, columnOrder, onColumnOrderC
       <TripObservationModal 
         isOpen={observationModalOpen} 
         onClose={() => setObservationModalOpen(false)}
+        trip={selectedTrip}
+      />
+      
+      <TripDeleteModal 
+        isOpen={deleteModalOpen} 
+        onClose={() => setDeleteModalOpen(false)}
         trip={selectedTrip}
       />
     </>
@@ -470,7 +477,7 @@ export const TripTable = ({ trips, columnVisibility, columnOrder, onColumnOrderC
                           className="text-destructive focus:text-destructive"
                         >
                           <Delete className="h-4 w-4 mr-2" />
-                          {t('delete')}
+                          Excluir Viagem
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
@@ -496,6 +503,12 @@ export const TripTable = ({ trips, columnVisibility, columnOrder, onColumnOrderC
         <TripObservationModal 
           isOpen={observationModalOpen} 
           onClose={() => setObservationModalOpen(false)}
+          trip={selectedTrip}
+        />
+        
+        <TripDeleteModal 
+          isOpen={deleteModalOpen} 
+          onClose={() => setDeleteModalOpen(false)}
           trip={selectedTrip}
         />
       </>
