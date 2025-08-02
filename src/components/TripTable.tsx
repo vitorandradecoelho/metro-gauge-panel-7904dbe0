@@ -4,6 +4,7 @@ import { Trip, ColumnVisibility, SortConfig, SortDirection, ColumnKey } from '@/
 import { StatusIcon } from './StatusIcon';
 import { TripModal } from './TripModal';
 import { TripRegistrationModal } from './TripRegistrationModal';
+import { TripObservationModal } from './TripObservationModal';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
@@ -15,7 +16,7 @@ import {
   DropdownMenuSeparator
 } from '@/components/ui/dropdown-menu';
 import { cn } from '@/lib/utils';
-import { Eye, MoreVertical, Smartphone, Monitor, ChevronUp, ChevronDown, ChevronsUpDown, GripVertical, Edit, Delete, Copy } from 'lucide-react';
+import { Eye, MoreVertical, Smartphone, Monitor, ChevronUp, ChevronDown, ChevronsUpDown, GripVertical, Edit, Delete, Copy, MessageSquare } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import {
   DndContext,
@@ -47,6 +48,7 @@ export const TripTable = ({ trips, columnVisibility, columnOrder, onColumnOrderC
   const [selectedTrip, setSelectedTrip] = useState<Trip | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
+  const [observationModalOpen, setObservationModalOpen] = useState(false);
   const [sortConfig, setSortConfig] = useState<SortConfig>({ field: null, direction: null });
   const isMobile = useIsMobile();
 
@@ -78,6 +80,9 @@ export const TripTable = ({ trips, columnVisibility, columnOrder, onColumnOrderC
       case 'edit':
         // Abrir modal de cadastro/edição de viagem
         setEditModalOpen(true);
+        break;
+      case 'observation':
+        setObservationModalOpen(true);
         break;
       case 'duplicate':
         // TODO: Implementar duplicação
@@ -300,6 +305,10 @@ export const TripTable = ({ trips, columnVisibility, columnOrder, onColumnOrderC
                           <Edit className="h-3 w-3 mr-2" />
                           {t('edit')}
                         </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleActionClick(trip, 'observation')}>
+                          <MessageSquare className="h-3 w-3 mr-2" />
+                          Incluir Observação
+                        </DropdownMenuItem>
                         <DropdownMenuItem onClick={() => handleActionClick(trip, 'duplicate')}>
                           <Copy className="h-3 w-3 mr-2" />
                           {t('duplicate')}
@@ -329,6 +338,12 @@ export const TripTable = ({ trips, columnVisibility, columnOrder, onColumnOrderC
       <TripRegistrationModal 
         isOpen={editModalOpen} 
         onClose={() => setEditModalOpen(false)}
+        trip={selectedTrip}
+      />
+      
+      <TripObservationModal 
+        isOpen={observationModalOpen} 
+        onClose={() => setObservationModalOpen(false)}
         trip={selectedTrip}
       />
     </>
@@ -441,6 +456,10 @@ export const TripTable = ({ trips, columnVisibility, columnOrder, onColumnOrderC
                           <Edit className="h-4 w-4 mr-2" />
                           {t('edit')}
                         </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleActionClick(trip, 'observation')}>
+                          <MessageSquare className="h-4 w-4 mr-2" />
+                          Incluir Observação
+                        </DropdownMenuItem>
                         <DropdownMenuItem onClick={() => handleActionClick(trip, 'duplicate')}>
                           <Copy className="h-4 w-4 mr-2" />
                           {t('duplicate')}
@@ -471,6 +490,12 @@ export const TripTable = ({ trips, columnVisibility, columnOrder, onColumnOrderC
         <TripRegistrationModal 
           isOpen={editModalOpen} 
           onClose={() => setEditModalOpen(false)}
+          trip={selectedTrip}
+        />
+        
+        <TripObservationModal 
+          isOpen={observationModalOpen} 
+          onClose={() => setObservationModalOpen(false)}
           trip={selectedTrip}
         />
       </>
