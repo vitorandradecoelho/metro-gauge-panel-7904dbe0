@@ -328,7 +328,8 @@ export const TripTable = ({ trips, columnVisibility, columnOrder, onColumnOrderC
       
       <TripRegistrationModal 
         isOpen={editModalOpen} 
-        onClose={() => setEditModalOpen(false)} 
+        onClose={() => setEditModalOpen(false)}
+        trip={selectedTrip}
       />
     </>
   );
@@ -469,7 +470,8 @@ export const TripTable = ({ trips, columnVisibility, columnOrder, onColumnOrderC
         
         <TripRegistrationModal 
           isOpen={editModalOpen} 
-          onClose={() => setEditModalOpen(false)} 
+          onClose={() => setEditModalOpen(false)}
+          trip={selectedTrip}
         />
       </>
     );
