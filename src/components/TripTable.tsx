@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { Trip, ColumnVisibility, SortConfig, SortDirection, ColumnKey } from '@/types/trip';
 import { StatusIcon } from './StatusIcon';
 import { TripModal } from './TripModal';
@@ -43,6 +44,7 @@ interface TripTableProps {
 
 export const TripTable = ({ trips, columnVisibility, columnOrder, onColumnOrderChange }: TripTableProps) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [selectedTrip, setSelectedTrip] = useState<Trip | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [sortConfig, setSortConfig] = useState<SortConfig>({ field: null, direction: null });
@@ -74,8 +76,8 @@ export const TripTable = ({ trips, columnVisibility, columnOrder, onColumnOrderC
         setModalOpen(true);
         break;
       case 'edit':
-        // TODO: Implementar edição
-        console.log('Editar viagem:', trip);
+        // Navegar para a página de edição de viagem
+        navigate('/trip-edit');
         break;
       case 'duplicate':
         // TODO: Implementar duplicação

@@ -112,8 +112,8 @@ const resources = {
         'saveError': 'Erro ao salvar ação. Tente novamente.',
         
         // Action menu
-        'view': 'Visualizar',
-        'edit': 'Editar',
+        'view': 'Arrastar',
+        'edit': 'Editar Viagem',
         'duplicate': 'Duplicar',
         'delete': 'Excluir',
     }
@@ -227,8 +227,8 @@ const resources = {
         'saveError': 'Error saving action. Please try again.',
         
         // Action menu
-        'view': 'View',
-        'edit': 'Edit',
+        'view': 'Drag',
+        'edit': 'Edit Trip',
         'duplicate': 'Duplicate',
         'delete': 'Delete',
     }
@@ -342,8 +342,8 @@ const resources = {
         'saveError': 'Error al guardar acción. Inténtalo de nuevo.',
         
         // Action menu
-        'view': 'Ver',
-        'edit': 'Editar',
+        'view': 'Arrastrar',
+        'edit': 'Editar Viaje',
         'duplicate': 'Duplicar',
         'delete': 'Eliminar',
     }
