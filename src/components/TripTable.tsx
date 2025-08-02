@@ -6,8 +6,15 @@ import { TripModal } from './TripModal';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
+import { 
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator
+} from '@/components/ui/dropdown-menu';
 import { cn } from '@/lib/utils';
-import { Eye, MoreVertical, Smartphone, Monitor, ChevronUp, ChevronDown, ChevronsUpDown, GripVertical } from 'lucide-react';
+import { Eye, MoreVertical, Smartphone, Monitor, ChevronUp, ChevronDown, ChevronsUpDown, GripVertical, Edit, Delete, Copy } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import {
   DndContext,
@@ -59,9 +66,28 @@ export const TripTable = ({ trips, columnVisibility, columnOrder, onColumnOrderC
     }
   };
 
-  const handleActionClick = (trip: Trip) => {
+  const handleActionClick = (trip: Trip, action: string) => {
     setSelectedTrip(trip);
-    setModalOpen(true);
+    
+    switch (action) {
+      case 'view':
+        setModalOpen(true);
+        break;
+      case 'edit':
+        // TODO: Implementar edição
+        console.log('Editar viagem:', trip);
+        break;
+      case 'duplicate':
+        // TODO: Implementar duplicação
+        console.log('Duplicar viagem:', trip);
+        break;
+      case 'delete':
+        // TODO: Implementar exclusão
+        console.log('Excluir viagem:', trip);
+        break;
+      default:
+        break;
+    }
   };
 
   const handleSort = (field: keyof Trip) => {
@@ -253,14 +279,39 @@ export const TripTable = ({ trips, columnVisibility, columnOrder, onColumnOrderC
                     );
                   })}
                   <td className="p-2">
-                    <Button
-                      size="icon-sm"
-                      variant="ghost"
-                      onClick={() => handleActionClick(trip)}
-                      className="h-6 w-6"
-                    >
-                      <Eye className="h-3 w-3" />
-                    </Button>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button
+                          size="icon-sm"
+                          variant="ghost"
+                          className="h-6 w-6"
+                        >
+                          <MoreVertical className="h-3 w-3" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" className="w-48">
+                        <DropdownMenuItem onClick={() => handleActionClick(trip, 'view')}>
+                          <Eye className="h-3 w-3 mr-2" />
+                          {t('view')}
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleActionClick(trip, 'edit')}>
+                          <Edit className="h-3 w-3 mr-2" />
+                          {t('edit')}
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleActionClick(trip, 'duplicate')}>
+                          <Copy className="h-3 w-3 mr-2" />
+                          {t('duplicate')}
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem 
+                          onClick={() => handleActionClick(trip, 'delete')}
+                          className="text-destructive focus:text-destructive"
+                        >
+                          <Delete className="h-3 w-3 mr-2" />
+                          {t('delete')}
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </td>
                 </tr>
               ))}
@@ -364,13 +415,38 @@ export const TripTable = ({ trips, columnVisibility, columnOrder, onColumnOrderC
                     );
                   })}
                   <td className="p-3">
-                    <Button
-                      size="icon-sm"
-                      variant="ghost"
-                      onClick={() => handleActionClick(trip)}
-                    >
-                      <Eye className="h-4 w-4" />
-                    </Button>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button
+                          size="icon-sm"
+                          variant="ghost"
+                        >
+                          <MoreVertical className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" className="w-48">
+                        <DropdownMenuItem onClick={() => handleActionClick(trip, 'view')}>
+                          <Eye className="h-4 w-4 mr-2" />
+                          {t('view')}
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleActionClick(trip, 'edit')}>
+                          <Edit className="h-4 w-4 mr-2" />
+                          {t('edit')}
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleActionClick(trip, 'duplicate')}>
+                          <Copy className="h-4 w-4 mr-2" />
+                          {t('duplicate')}
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem 
+                          onClick={() => handleActionClick(trip, 'delete')}
+                          className="text-destructive focus:text-destructive"
+                        >
+                          <Delete className="h-4 w-4 mr-2" />
+                          {t('delete')}
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </td>
                 </tr>
               ))}

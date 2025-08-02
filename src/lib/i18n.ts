@@ -110,6 +110,12 @@ const resources = {
         // Toast messages
         'saveSuccess': 'Ação salva com sucesso!',
         'saveError': 'Erro ao salvar ação. Tente novamente.',
+        
+        // Action menu
+        'view': 'Visualizar',
+        'edit': 'Editar',
+        'duplicate': 'Duplicar',
+        'delete': 'Excluir',
     }
   },
   'en': {
@@ -219,6 +225,12 @@ const resources = {
         // Toast messages
         'saveSuccess': 'Action saved successfully!',
         'saveError': 'Error saving action. Please try again.',
+        
+        // Action menu
+        'view': 'View',
+        'edit': 'Edit',
+        'duplicate': 'Duplicate',
+        'delete': 'Delete',
     }
   },
   'es-CL': {
@@ -328,6 +340,12 @@ const resources = {
         // Toast messages
         'saveSuccess': '¡Acción guardada exitosamente!',
         'saveError': 'Error al guardar acción. Inténtalo de nuevo.',
+        
+        // Action menu
+        'view': 'Ver',
+        'edit': 'Editar',
+        'duplicate': 'Duplicar',
+        'delete': 'Eliminar',
     }
   }
 };
