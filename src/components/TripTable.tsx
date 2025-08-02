@@ -1,9 +1,9 @@
 import { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
 import { Trip, ColumnVisibility, SortConfig, SortDirection, ColumnKey } from '@/types/trip';
 import { StatusIcon } from './StatusIcon';
 import { TripModal } from './TripModal';
+import { TripRegistrationModal } from './TripRegistrationModal';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
@@ -44,9 +44,9 @@ interface TripTableProps {
 
 export const TripTable = ({ trips, columnVisibility, columnOrder, onColumnOrderChange }: TripTableProps) => {
   const { t } = useTranslation();
-  const navigate = useNavigate();
   const [selectedTrip, setSelectedTrip] = useState<Trip | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
+  const [editModalOpen, setEditModalOpen] = useState(false);
   const [sortConfig, setSortConfig] = useState<SortConfig>({ field: null, direction: null });
   const isMobile = useIsMobile();
 
@@ -76,8 +76,8 @@ export const TripTable = ({ trips, columnVisibility, columnOrder, onColumnOrderC
         setModalOpen(true);
         break;
       case 'edit':
-        // Navegar para a página de edição de viagem
-        navigate('/trip-edit');
+        // Abrir modal de cadastro/edição de viagem
+        setEditModalOpen(true);
         break;
       case 'duplicate':
         // TODO: Implementar duplicação
@@ -320,13 +320,18 @@ export const TripTable = ({ trips, columnVisibility, columnOrder, onColumnOrderC
             </tbody>
           </table>
         </div>
-        
-        <TripModal 
-          isOpen={modalOpen} 
-          onClose={() => setModalOpen(false)} 
-        />
-      </>
-    );
+      
+      <TripModal 
+        isOpen={modalOpen} 
+        onClose={() => setModalOpen(false)} 
+      />
+      
+      <TripRegistrationModal 
+        isOpen={editModalOpen} 
+        onClose={() => setEditModalOpen(false)} 
+      />
+    </>
+  );
   }
 
   // Desktop Table Layout
@@ -456,11 +461,16 @@ export const TripTable = ({ trips, columnVisibility, columnOrder, onColumnOrderC
           </table>
         </div>
       </DndContext>
-      
-      <TripModal 
-        isOpen={modalOpen} 
-        onClose={() => setModalOpen(false)} 
-      />
-    </>
-  );
+        
+        <TripModal 
+          isOpen={modalOpen} 
+          onClose={() => setModalOpen(false)} 
+        />
+        
+        <TripRegistrationModal 
+          isOpen={editModalOpen} 
+          onClose={() => setEditModalOpen(false)} 
+        />
+      </>
+    );
 };
