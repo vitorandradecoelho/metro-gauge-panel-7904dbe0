@@ -8,7 +8,8 @@ import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
-import { Filter, Calendar, Clock, Search } from 'lucide-react';
+import { ScheduleModal } from './ScheduleModal';
+import { Filter, Calendar, Clock, Search, Plus } from 'lucide-react';
 
 interface TripFiltersProps {
   filters: FilterOptions;
@@ -38,6 +39,7 @@ export const TripFilters = ({ filters, onFiltersChange, onConsult, isVisible }: 
   const [lines, setLines] = useState<LineData[]>([]);
   const [loadingLines, setLoadingLines] = useState(false);
   const [availableTrajetos, setAvailableTrajetos] = useState<TrajetoData[]>([]);
+  const [scheduleModalOpen, setScheduleModalOpen] = useState(false);
 
   const uniqueRoutes = getUniqueRoutes();
   const uniqueConsortiums = getUniqueConsortiums();
@@ -300,12 +302,25 @@ export const TripFilters = ({ filters, onFiltersChange, onConsult, isVisible }: 
 
         {/* Action Buttons */}
         <div className="flex justify-end gap-3 pt-4 border-t">
+          <Button 
+            variant="outline" 
+            onClick={() => setScheduleModalOpen(true)} 
+            className="flex items-center gap-2"
+          >
+            <Plus className="h-4 w-4" />
+            Incluir Horário
+          </Button>
           <Button onClick={handleConsult} className="flex items-center gap-2">
             <Search className="h-4 w-4" />
             Consultar
           </Button>
         </div>
       </div>
+      
+      <ScheduleModal 
+        isOpen={scheduleModalOpen} 
+        onClose={() => setScheduleModalOpen(false)}
+      />
     </Card>
   );
 };
