@@ -2,10 +2,10 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Trip } from '@/types/trip';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
+import { ResponsiveModalWrapper } from '@/components/common/ResponsiveModalWrapper';
+import { TextareaField } from '@/components/common/FormFields';
+import { useModalState } from '@/hooks/useModalState';
 import api from '@/services/api';
 
 interface TripDeleteModalProps {
@@ -17,8 +17,8 @@ interface TripDeleteModalProps {
 export const TripDeleteModal = ({ isOpen, onClose, trip }: TripDeleteModalProps) => {
   const { t } = useTranslation();
   const { toast } = useToast();
+  const { isLoading, withLoading } = useModalState();
   const [motivoExclusao, setMotivoExclusao] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
 
   const handleClose = () => {
     setMotivoExclusao('');
@@ -31,15 +31,13 @@ export const TripDeleteModal = ({ isOpen, onClose, trip }: TripDeleteModalProps)
     if (!motivoExclusao.trim()) {
       toast({
         variant: "destructive",
-        title: "Erro",
-        description: "Por favor, escreva o motivo da exclusão."
+        title: t('error'),
+        description: t('writeDeletionReason')
       });
       return;
     }
 
-    setIsLoading(true);
-    
-    try {
+    await withLoading(async () => {
       const deleteData = {
         idViagem: trip.id,
         usuario: "Vitor",
@@ -52,62 +50,48 @@ export const TripDeleteModal = ({ isOpen, onClose, trip }: TripDeleteModalProps)
       await api.delete(`/api/controlePartida/209/excluirViagem/${encodedData}`);
       
       toast({
-        title: "Sucesso",
-        description: "Viagem excluída com sucesso!"
+        title: t('success'),
+        description: t('tripDeletedSuccess')
       });
       
       handleClose();
-    } catch (error) {
-      console.error('Erro ao excluir viagem:', error);
-      toast({
-        variant: "destructive",
-        title: "Erro",
-        description: "Erro ao excluir viagem. Tente novamente."
-      });
-    } finally {
-      setIsLoading(false);
-    }
+    });
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle className="text-lg font-semibold">
-            EXCLUIR VIAGEM
-          </DialogTitle>
-        </DialogHeader>
-        
-        <div className="space-y-4 py-4">
-          <div className="space-y-2">
-            <Label htmlFor="motivo-exclusao">Escreva uma Observação</Label>
-            <Textarea
-              id="motivo-exclusao"
-              value={motivoExclusao}
-              onChange={(e) => setMotivoExclusao(e.target.value)}
-              placeholder="Digite o motivo da exclusão..."
-              className="min-h-[120px] resize-none"
-            />
-          </div>
-        </div>
+    <ResponsiveModalWrapper
+      isOpen={isOpen}
+      onClose={handleClose}
+      title={t('deleteTrip')}
+      maxWidth="max-w-md"
+    >
+      <TextareaField
+        id="motivo-exclusao"
+        label={t('writeObservation')}
+        value={motivoExclusao}
+        onChange={setMotivoExclusao}
+        placeholder={t('typeDeletionReason')}
+        required
+      />
 
-        <div className="flex justify-end gap-2">
-          <Button
-            variant="outline"
-            onClick={handleClose}
-            disabled={isLoading}
-          >
-            CANCELAR
-          </Button>
-          <Button
-            onClick={handleDelete}
-            disabled={isLoading}
-            variant="destructive"
-          >
-            {isLoading ? 'Excluindo...' : 'SALVAR'}
-          </Button>
-        </div>
-      </DialogContent>
-    </Dialog>
+      <div className="flex flex-col sm:flex-row justify-end gap-2 pt-4 border-t">
+        <Button
+          variant="outline"
+          onClick={handleClose}
+          disabled={isLoading}
+          className="order-2 sm:order-1"
+        >
+          {t('cancel')}
+        </Button>
+        <Button
+          onClick={handleDelete}
+          disabled={isLoading}
+          variant="destructive"
+          className="order-1 sm:order-2"
+        >
+          {isLoading ? t('deleting') : t('save')}
+        </Button>
+      </div>
+    </ResponsiveModalWrapper>
   );
 };

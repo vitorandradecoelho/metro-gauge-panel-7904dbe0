@@ -116,6 +116,96 @@ const resources = {
         'edit': 'Editar Viagem',
         'duplicate': 'Duplicar',
         'delete': 'Excluir',
+        
+        // Modal titles
+        'registerTrip': 'CADASTRAR VIAGEM',
+        'editTrip': 'EDITAR VIAGEM',
+        'includeObservation': 'INCLUIR OBSERVAÇÃO',
+        'deleteTrip': 'EXCLUIR VIAGEM',
+        'includeSchedule': 'INCLUIR HORÁRIO',
+        'editSchedule': 'EDITAR HORÁRIO',
+        
+        // Form fields
+        'lineField': 'Linha',
+        'routeField': 'Trajeto',
+        'initialDate': 'Data Inicial',
+        'finalDate': 'Data Final',
+        'initialTime': 'Hora Inicial',
+        'finalTime': 'Hora Final',
+        'driverField': 'Motorista',
+        'arrivalToPoint': 'Chegada ao ponto',
+        'arrivalTime': 'Hora Chegada',
+        'passengerCount': 'Quantidade de Passageiros',
+        'predefinedReasons': 'Motivos Predefinidos',
+        'observation': 'Observação',
+        'allocateTrip': 'Alocar Viagem',
+        'operation': 'Operação',
+        'service': 'Serviço',
+        'journey': 'Jornada',
+        'startTime': 'Hora Início',
+        'endTime': 'Hora Fim',
+        'changeJourney': 'Alterar jornada',
+        'predefinedMessage': 'Mensagem Predefinida',
+        'writeObservation': 'Escreva uma Observação',
+        'exclusionReason': 'Motivo da Exclusão',
+        
+        // Buttons
+        'saveAndAllocate': 'SALVAR + ALOCAR',
+        'saving': 'Salvando...',
+        'deleting': 'Excluindo...',
+        
+        // Placeholders
+        'consultByLine': 'Consulte pela linha',
+        'consultByRoute': 'Consulte pelo trajeto',
+        'selectOne': 'Selecione um',
+        'typeObservation': 'Digite sua observação...',
+        'typeDeletionReason': 'Digite o motivo da exclusão...',
+        
+        // Messages
+        'requiredFields': '*Campos Obrigatórios',
+        'selectOperation': 'Por favor, selecione uma operação.',
+        'fillStartEndTimes': 'Por favor, preencha os horários de início e fim.',
+        'fillAllRequiredFields': 'Por favor, preencha todos os campos obrigatórios.',
+        'selectMessageOrWrite': 'Por favor, selecione uma mensagem predefinida ou escreva uma observação.',
+        'writeDeletionReason': 'Por favor, escreva o motivo da exclusão.',
+        
+        // Success messages
+        'scheduleEditedSuccess': 'Horário editado com sucesso!',
+        'scheduleDeletedSuccess': 'Horários eliminados com sucesso!',
+        'tripEditedSuccess': 'Viagem editada com sucesso',
+        'tripEditedAndAllocated': 'Viagem editada e alocada',
+        'observationIncludedSuccess': 'Observação incluída com sucesso!',
+        'tripDeletedSuccess': 'Viagem excluída com sucesso!',
+        'scheduleIncludedSuccess': 'Horário incluído com sucesso!',
+        
+        // Error messages
+        'scheduleEditError': 'Erro ao editar horário. Tente novamente.',
+        'scheduleDeleteError': 'Erro ao eliminar horários. Tente novamente.',
+        'tripEditError': 'Erro ao editar viagem',
+        'tripEditErrorDesc': 'Ocorreu um erro ao tentar editar a viagem',
+        'observationIncludeError': 'Erro ao incluir observação. Tente novamente.',
+        'tripDeleteError': 'Erro ao excluir viagem. Tente novamente.',
+        'scheduleIncludeError': 'Erro ao incluir horário. Tente novamente.',
+        
+        // Predefined messages
+        'gpsProblems': 'PROBLEMA GPS',
+        'trafficDelay': 'ATRASO NO TRÂNSITO',
+        'mechanicalProblem': 'PROBLEMA MECÂNICO',
+        'passengerProblem': 'PASSAGEIRO PROBLEMA',
+        'accident': 'ACIDENTE',
+        'others': 'OUTROS',
+        'operationalManeuver': 'MANOBRA OPERACIONAL',
+        'delay': 'Atraso',
+        'maintenance': 'Manutenção',
+        'reinforcement': 'Reforço',
+        
+        // Operations
+        'editOp': 'Editar',
+        'deleteOp': 'Eliminar',
+        
+        // Confirmation
+        'areYouSure': 'Você tem certeza?',
+        'schedulesWillBeDeleted': 'Os horários das jornadas serão eliminados:',
     }
   },
   'en': {
@@ -231,6 +321,96 @@ const resources = {
         'edit': 'Edit Trip',
         'duplicate': 'Duplicate',
         'delete': 'Delete',
+        
+        // Modal titles
+        'registerTrip': 'REGISTER TRIP',
+        'editTrip': 'EDIT TRIP',
+        'includeObservation': 'INCLUDE OBSERVATION',
+        'deleteTrip': 'DELETE TRIP',
+        'includeSchedule': 'INCLUDE SCHEDULE',
+        'editSchedule': 'EDIT SCHEDULE',
+        
+        // Form fields
+        'lineField': 'Line',
+        'routeField': 'Route',
+        'initialDate': 'Initial Date',
+        'finalDate': 'Final Date',
+        'initialTime': 'Initial Time',
+        'finalTime': 'Final Time',
+        'driverField': 'Driver',
+        'arrivalToPoint': 'Arrival to point',
+        'arrivalTime': 'Arrival Time',
+        'passengerCount': 'Passenger Count',
+        'predefinedReasons': 'Predefined Reasons',
+        'observation': 'Observation',
+        'allocateTrip': 'Allocate Trip',
+        'operation': 'Operation',
+        'service': 'Service',
+        'journey': 'Journey',
+        'startTime': 'Start Time',
+        'endTime': 'End Time',
+        'changeJourney': 'Change journey',
+        'predefinedMessage': 'Predefined Message',
+        'writeObservation': 'Write an Observation',
+        'exclusionReason': 'Exclusion Reason',
+        
+        // Buttons
+        'saveAndAllocate': 'SAVE + ALLOCATE',
+        'saving': 'Saving...',
+        'deleting': 'Deleting...',
+        
+        // Placeholders
+        'consultByLine': 'Consult by line',
+        'consultByRoute': 'Consult by route',
+        'selectOne': 'Select one',
+        'typeObservation': 'Type your observation...',
+        'typeDeletionReason': 'Type the deletion reason...',
+        
+        // Messages
+        'requiredFields': '*Required Fields',
+        'selectOperation': 'Please select an operation.',
+        'fillStartEndTimes': 'Please fill in the start and end times.',
+        'fillAllRequiredFields': 'Please fill in all required fields.',
+        'selectMessageOrWrite': 'Please select a predefined message or write an observation.',
+        'writeDeletionReason': 'Please write the deletion reason.',
+        
+        // Success messages
+        'scheduleEditedSuccess': 'Schedule edited successfully!',
+        'scheduleDeletedSuccess': 'Schedules deleted successfully!',
+        'tripEditedSuccess': 'Trip edited successfully',
+        'tripEditedAndAllocated': 'Trip edited and allocated',
+        'observationIncludedSuccess': 'Observation included successfully!',
+        'tripDeletedSuccess': 'Trip deleted successfully!',
+        'scheduleIncludedSuccess': 'Schedule included successfully!',
+        
+        // Error messages
+        'scheduleEditError': 'Error editing schedule. Try again.',
+        'scheduleDeleteError': 'Error deleting schedules. Try again.',
+        'tripEditError': 'Error editing trip',
+        'tripEditErrorDesc': 'An error occurred while trying to edit the trip',
+        'observationIncludeError': 'Error including observation. Try again.',
+        'tripDeleteError': 'Error deleting trip. Try again.',
+        'scheduleIncludeError': 'Error including schedule. Try again.',
+        
+        // Predefined messages
+        'gpsProblems': 'GPS PROBLEMS',
+        'trafficDelay': 'TRAFFIC DELAY',
+        'mechanicalProblem': 'MECHANICAL PROBLEM',
+        'passengerProblem': 'PASSENGER PROBLEM',
+        'accident': 'ACCIDENT',
+        'others': 'OTHERS',
+        'operationalManeuver': 'OPERATIONAL MANEUVER',
+        'delay': 'Delay',
+        'maintenance': 'Maintenance',
+        'reinforcement': 'Reinforcement',
+        
+        // Operations
+        'editOp': 'Edit',
+        'deleteOp': 'Delete',
+        
+        // Confirmation
+        'areYouSure': 'Are you sure?',
+        'schedulesWillBeDeleted': 'The journey schedules will be deleted:',
     }
   },
   'es-CL': {
@@ -346,6 +526,96 @@ const resources = {
         'edit': 'Editar Viaje',
         'duplicate': 'Duplicar',
         'delete': 'Eliminar',
+        
+        // Modal titles
+        'registerTrip': 'REGISTRAR VIAJE',
+        'editTrip': 'EDITAR VIAJE',
+        'includeObservation': 'INCLUIR OBSERVACIÓN',
+        'deleteTrip': 'ELIMINAR VIAJE',
+        'includeSchedule': 'INCLUIR HORARIO',
+        'editSchedule': 'EDITAR HORARIO',
+        
+        // Form fields
+        'lineField': 'Línea',
+        'routeField': 'Ruta',
+        'initialDate': 'Fecha Inicial',
+        'finalDate': 'Fecha Final',
+        'initialTime': 'Hora Inicial',
+        'finalTime': 'Hora Final',
+        'driverField': 'Conductor',
+        'arrivalToPoint': 'Llegada al punto',
+        'arrivalTime': 'Hora Llegada',
+        'passengerCount': 'Cantidad de Pasajeros',
+        'predefinedReasons': 'Motivos Predefinidos',
+        'observation': 'Observación',
+        'allocateTrip': 'Asignar Viaje',
+        'operation': 'Operación',
+        'service': 'Servicio',
+        'journey': 'Jornada',
+        'startTime': 'Hora Inicio',
+        'endTime': 'Hora Fin',
+        'changeJourney': 'Alterar jornada',
+        'predefinedMessage': 'Mensaje Predefinido',
+        'writeObservation': 'Escriba una Observación',
+        'exclusionReason': 'Motivo de Exclusión',
+        
+        // Buttons
+        'saveAndAllocate': 'GUARDAR + ASIGNAR',
+        'saving': 'Guardando...',
+        'deleting': 'Eliminando...',
+        
+        // Placeholders
+        'consultByLine': 'Consulte por la línea',
+        'consultByRoute': 'Consulte por la ruta',
+        'selectOne': 'Seleccione uno',
+        'typeObservation': 'Digite su observación...',
+        'typeDeletionReason': 'Digite el motivo de la exclusión...',
+        
+        // Messages
+        'requiredFields': '*Campos Obligatorios',
+        'selectOperation': 'Por favor, seleccione una operación.',
+        'fillStartEndTimes': 'Por favor, complete los horarios de inicio y fin.',
+        'fillAllRequiredFields': 'Por favor, complete todos los campos obligatorios.',
+        'selectMessageOrWrite': 'Por favor, seleccione un mensaje predefinido o escriba una observación.',
+        'writeDeletionReason': 'Por favor, escriba el motivo de la exclusión.',
+        
+        // Success messages
+        'scheduleEditedSuccess': 'Horario editado exitosamente!',
+        'scheduleDeletedSuccess': 'Horarios eliminados exitosamente!',
+        'tripEditedSuccess': 'Viaje editado exitosamente',
+        'tripEditedAndAllocated': 'Viaje editado y asignado',
+        'observationIncludedSuccess': 'Observación incluida exitosamente!',
+        'tripDeletedSuccess': 'Viaje eliminado exitosamente!',
+        'scheduleIncludedSuccess': 'Horario incluido exitosamente!',
+        
+        // Error messages
+        'scheduleEditError': 'Error al editar horario. Intente nuevamente.',
+        'scheduleDeleteError': 'Error al eliminar horarios. Intente nuevamente.',
+        'tripEditError': 'Error al editar viaje',
+        'tripEditErrorDesc': 'Ocurrió un error al intentar editar el viaje',
+        'observationIncludeError': 'Error al incluir observación. Intente nuevamente.',
+        'tripDeleteError': 'Error al eliminar viaje. Intente nuevamente.',
+        'scheduleIncludeError': 'Error al incluir horario. Intente nuevamente.',
+        
+        // Predefined messages
+        'gpsProblems': 'PROBLEMAS GPS',
+        'trafficDelay': 'ATRASO EN EL TRÁFICO',
+        'mechanicalProblem': 'PROBLEMA MECÁNICO',
+        'passengerProblem': 'PASAJERO PROBLEMA',
+        'accident': 'ACCIDENTE',
+        'others': 'OTROS',
+        'operationalManeuver': 'MANIOBRA OPERACIONAL',
+        'delay': 'Atraso',
+        'maintenance': 'Mantenimiento',
+        'reinforcement': 'Refuerzo',
+        
+        // Operations
+        'editOp': 'Editar',
+        'deleteOp': 'Eliminar',
+        
+        // Confirmation
+        'areYouSure': '¿Estás seguro?',
+        'schedulesWillBeDeleted': 'Los horarios de las jornadas se eliminarán:',
     }
   }
 };

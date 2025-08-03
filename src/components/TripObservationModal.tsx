@@ -2,11 +2,11 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Trip } from '@/types/trip';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
+import { ResponsiveModalWrapper } from '@/components/common/ResponsiveModalWrapper';
+import { SelectField, TextareaField } from '@/components/common/FormFields';
+import { useModalState } from '@/hooks/useModalState';
+import { usePredefinedOptions } from '@/hooks/usePredefinedOptions';
 import api from '@/services/api';
 
 interface TripObservationModalProps {
@@ -15,21 +15,13 @@ interface TripObservationModalProps {
   trip: Trip | null;
 }
 
-const predefinedMessages = [
-  'PROBLEMA GPS',
-  'ATRASO NO TRÂNSITO',
-  'PROBLEMA MECÂNICO',
-  'PASSAGEIRO PROBLEMA',
-  'ACIDENTE',
-  'OUTROS'
-];
-
 export const TripObservationModal = ({ isOpen, onClose, trip }: TripObservationModalProps) => {
   const { t } = useTranslation();
   const { toast } = useToast();
+  const { isLoading, withLoading } = useModalState();
+  const { predefinedMessages } = usePredefinedOptions();
   const [selectedMessage, setSelectedMessage] = useState('');
   const [customObservation, setCustomObservation] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
 
   const handleClose = () => {
     setSelectedMessage('');
@@ -44,15 +36,13 @@ export const TripObservationModal = ({ isOpen, onClose, trip }: TripObservationM
     if (!finalMessage.trim()) {
       toast({
         variant: "destructive",
-        title: "Erro",
-        description: "Por favor, selecione uma mensagem predefinida ou escreva uma observação."
+        title: t('error'),
+        description: t('selectMessageOrWrite')
       });
       return;
     }
 
-    setIsLoading(true);
-    
-    try {
+    await withLoading(async () => {
       const observationData = {
         observacao: {
           dataAtualizacao: new Date().toISOString(),
@@ -120,79 +110,56 @@ export const TripObservationModal = ({ isOpen, onClose, trip }: TripObservationM
       await api.post('/api/v1/planejamentoViagem/incluirInformacao/209', observationData);
       
       toast({
-        title: "Sucesso",
-        description: "Observação incluída com sucesso!"
+        title: t('success'),
+        description: t('observationIncludedSuccess')
       });
       
       handleClose();
-    } catch (error) {
-      console.error('Erro ao incluir observação:', error);
-      toast({
-        variant: "destructive",
-        title: "Erro",
-        description: "Erro ao incluir observação. Tente novamente."
-      });
-    } finally {
-      setIsLoading(false);
-    }
+    });
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle className="text-lg font-semibold">
-            INCLUIR OBSERVAÇÃO
-          </DialogTitle>
-        </DialogHeader>
-        
-        <div className="space-y-4 py-4">
-          <div className="space-y-2">
-            <Label htmlFor="predefined-message">Mensagem Predefinida</Label>
-            <Select value={selectedMessage} onValueChange={setSelectedMessage}>
-              <SelectTrigger id="predefined-message">
-                <SelectValue placeholder="SELECIONE" />
-              </SelectTrigger>
-              <SelectContent>
-                {predefinedMessages.map((message) => (
-                  <SelectItem key={message} value={message}>
-                    {message}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+    <ResponsiveModalWrapper
+      isOpen={isOpen}
+      onClose={handleClose}
+      title={t('includeObservation')}
+      maxWidth="max-w-md"
+    >
+      <SelectField
+        id="predefined-message"
+        label={t('predefinedMessage')}
+        value={selectedMessage}
+        onChange={setSelectedMessage}
+        placeholder={t('select')}
+        options={predefinedMessages}
+      />
 
-          <div className="space-y-2">
-            <Label htmlFor="custom-observation">Escreva uma Observação</Label>
-            <Textarea
-              id="custom-observation"
-              value={customObservation}
-              onChange={(e) => setCustomObservation(e.target.value)}
-              placeholder="Digite sua observação..."
-              className="min-h-[120px] resize-none"
-              disabled={!!selectedMessage}
-            />
-          </div>
-        </div>
+      <TextareaField
+        id="custom-observation"
+        label={t('writeObservation')}
+        value={customObservation}
+        onChange={setCustomObservation}
+        placeholder={t('typeObservation')}
+        disabled={!!selectedMessage}
+      />
 
-        <div className="flex justify-end gap-2">
-          <Button
-            variant="outline"
-            onClick={handleClose}
-            disabled={isLoading}
-          >
-            CANCELAR
-          </Button>
-          <Button
-            onClick={handleSave}
-            disabled={isLoading}
-            className="bg-primary hover:bg-primary/90"
-          >
-            {isLoading ? 'Salvando...' : 'SALVAR'}
-          </Button>
-        </div>
-      </DialogContent>
-    </Dialog>
+      <div className="flex flex-col sm:flex-row justify-end gap-2 pt-4 border-t">
+        <Button
+          variant="outline"
+          onClick={handleClose}
+          disabled={isLoading}
+          className="order-2 sm:order-1"
+        >
+          {t('cancel')}
+        </Button>
+        <Button
+          onClick={handleSave}
+          disabled={isLoading}
+          className="bg-primary hover:bg-primary/90 order-1 sm:order-2"
+        >
+          {isLoading ? t('saving') : t('save')}
+        </Button>
+      </div>
+    </ResponsiveModalWrapper>
   );
 };
