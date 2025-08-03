@@ -42,21 +42,32 @@ export const TripRegistrationModal = ({ isOpen, onClose, onSave, trip }: TripReg
       // Populate form with trip data when editing
       setFormData({
         linha: trip.line || '',
-        trajeto: trip.route || '',
+        trajeto: trip.route === 'ida' ? 'Ida' : trip.route === 'volta' ? 'Volta' : trip.route || '',
         dataInicial: trip.date || '',
         horaInicial: trip.plannedStart || '00:00:00',
         dataFinal: trip.date || '',
         horaFinal: trip.plannedEnd || '23:59:59',
-        veiculo: trip.plannedVehicle || '',
+        veiculo: trip.plannedVehicle || trip.realVehicle || '',
         motorista: trip.driver || '',
         chegadaAoPonto: trip.date || '',
-        horaChegada: trip.realStart || '',
+        horaChegada: trip.realStart || trip.plannedStart || '',
         quantidadePassageiros: trip.passengers?.toString() || '',
         motivosPredefinidos: 'MANOBRA OPERACIONAL',
         observacao: '',
         alocarViagem: false,
       });
-    } else if (!trip) {
+      console.log('Preenchendo formulário com dados da viagem:', {
+        trip,
+        formData: {
+          linha: trip.line,
+          trajeto: trip.route,
+          dataInicial: trip.date,
+          veiculo: trip.plannedVehicle || trip.realVehicle,
+          motorista: trip.driver,
+          passageiros: trip.passengers
+        }
+      });
+    } else if (!trip && isOpen) {
       // Reset form for new trip
       setFormData({
         linha: '',
