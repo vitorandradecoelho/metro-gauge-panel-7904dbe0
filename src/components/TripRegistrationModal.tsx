@@ -196,7 +196,7 @@ export const TripRegistrationModal = ({ isOpen, onClose, onSave, trip }: TripReg
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="w-[95vw] max-w-2xl max-h-[90vh] overflow-y-auto mx-auto">
         <DialogHeader className="bg-primary text-primary-foreground p-4 -m-6 mb-6">
           <DialogTitle className="flex items-center justify-between">
             <span>{trip ? 'EDITAR VIAGEM' : 'CADASTRAR VIAGEM'}</span>
@@ -246,7 +246,7 @@ export const TripRegistrationModal = ({ isOpen, onClose, onSave, trip }: TripReg
           </div>
 
           {/* Data Inicial e Final */}
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <Label htmlFor="dataInicial" className="text-sm font-medium">Data Inicial:</Label>
               <div className="relative mt-1">
@@ -295,7 +295,7 @@ export const TripRegistrationModal = ({ isOpen, onClose, onSave, trip }: TripReg
           </div>
 
           {/* Veículo e Motorista */}
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <Label htmlFor="veiculo" className="text-sm font-medium">Veículo</Label>
               <Select value={formData.veiculo} onValueChange={(value) => setFormData({ ...formData, veiculo: value })}>
@@ -401,7 +401,7 @@ export const TripRegistrationModal = ({ isOpen, onClose, onSave, trip }: TripReg
           <p className="text-sm text-muted-foreground italic">*Campos Obrigatórios</p>
         </div>
 
-        <div className="flex justify-end gap-3 pt-4 border-t">
+        <div className="flex flex-col sm:flex-row justify-end gap-3 pt-4 border-t">
           <Button 
             onClick={handleSaveAndAllocate}
             className="bg-blue-500 hover:bg-blue-600 text-white"

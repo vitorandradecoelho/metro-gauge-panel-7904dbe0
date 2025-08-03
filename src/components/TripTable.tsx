@@ -321,10 +321,6 @@ export const TripTable = ({ trips, columnVisibility, columnOrder, onColumnOrderC
                             Editar Horário
                           </DropdownMenuItem>
                         )}
-                        <DropdownMenuItem onClick={() => handleActionClick(trip, 'duplicate')}>
-                          <Copy className="h-3 w-3 mr-2" />
-                          {t('duplicate')}
-                        </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem 
                           onClick={() => handleActionClick(trip, 'delete')}
@@ -489,10 +485,6 @@ export const TripTable = ({ trips, columnVisibility, columnOrder, onColumnOrderC
                             Editar Horário
                           </DropdownMenuItem>
                         )}
-                        <DropdownMenuItem onClick={() => handleActionClick(trip, 'duplicate')}>
-                          <Copy className="h-4 w-4 mr-2" />
-                          {t('duplicate')}
-                        </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem 
                           onClick={() => handleActionClick(trip, 'delete')}

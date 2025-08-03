@@ -303,22 +303,22 @@ export const TripFilters = ({ filters, onFiltersChange, onConsult, isVisible }: 
         </div>
 
         {/* Action Buttons */}
-        <div className="flex justify-end gap-3 pt-4 border-t">
+        <div className="flex flex-col sm:flex-row justify-end gap-3 pt-4 border-t">
           <Button 
             variant="outline" 
             onClick={() => setScheduleModalOpen(true)} 
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 w-full sm:w-auto"
           >
             <Plus className="h-4 w-4" />
-            Incluir Horário
+            <span className="block sm:inline">Incluir Horário</span>
           </Button>
           <Button 
             variant="outline" 
             onClick={() => setEditScheduleModalOpen(true)} 
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 w-full sm:w-auto"
           >
             <Edit className="h-4 w-4" />
-            Editar Horário
+            <span className="block sm:inline">Editar Horário</span>
           </Button>
           <Button onClick={handleConsult} className="flex items-center gap-2">
             <Search className="h-4 w-4" />
