@@ -1,14 +1,24 @@
-import { useState, useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
-import { Trip, ColumnVisibility, SortConfig, SortDirection, ColumnKey } from '@/types/trip';
-import { StatusIcon } from './StatusIcon';
-import { TripModal } from './TripModal';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Card } from '@/components/ui/card';
-import { cn } from '@/lib/utils';
-import { Eye, MoreVertical, Smartphone, Monitor, ChevronUp, ChevronDown, ChevronsUpDown, GripVertical } from 'lucide-react';
-import { useIsMobile } from '@/hooks/use-mobile';
+import { useState, useMemo } from "react";
+import { useTranslation } from "react-i18next";
+import {
+  Trip,
+  ColumnVisibility,
+  SortConfig,
+  SortDirection,
+  ColumnKey,
+} from "@/types/trip";
+import { StatusIcon } from "./StatusIcon";
+import { TripModal } from "./TripModal";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import {
+  Eye,
+  ChevronUp,
+  ChevronDown,
+  ChevronsUpDown,
+  GripVertical,
+} from "lucide-react";
+import { useIsMobile } from "@/hooks/use-mobile";
 import {
   DndContext,
   closestCenter,
@@ -17,15 +27,15 @@ import {
   useSensor,
   useSensors,
   DragEndEvent,
-} from '@dnd-kit/core';
+} from "@dnd-kit/core";
 import {
   arrayMove,
   SortableContext,
   sortableKeyboardCoordinates,
   horizontalListSortingStrategy,
   useSortable,
-} from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 
 interface TripTableProps {
   trips: Trip[];
@@ -34,11 +44,19 @@ interface TripTableProps {
   onColumnOrderChange: (order: ColumnKey[]) => void;
 }
 
-export const TripTable = ({ trips, columnVisibility, columnOrder, onColumnOrderChange }: TripTableProps) => {
+export const TripTable = ({
+  trips,
+  columnVisibility,
+  columnOrder,
+  onColumnOrderChange,
+}: TripTableProps) => {
   const { t } = useTranslation();
   const [selectedTrip, setSelectedTrip] = useState<Trip | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
-  const [sortConfig, setSortConfig] = useState<SortConfig>({ field: null, direction: null });
+  const [sortConfig, setSortConfig] = useState<SortConfig>({
+    field: null,
+    direction: null,
+  });
   const isMobile = useIsMobile();
 
   const sensors = useSensors(
@@ -54,7 +72,7 @@ export const TripTable = ({ trips, columnVisibility, columnOrder, onColumnOrderC
     if (active.id !== over?.id) {
       const oldIndex = columnOrder.indexOf(active.id as ColumnKey);
       const newIndex = columnOrder.indexOf(over?.id as ColumnKey);
-      
+
       onColumnOrderChange(arrayMove(columnOrder, oldIndex, newIndex));
     }
   };
@@ -65,18 +83,18 @@ export const TripTable = ({ trips, columnVisibility, columnOrder, onColumnOrderC
   };
 
   const handleSort = (field: keyof Trip) => {
-    let direction: SortDirection = 'asc';
-    
+    let direction: SortDirection = "asc";
+
     if (sortConfig.field === field) {
-      if (sortConfig.direction === 'asc') {
-        direction = 'desc';
-      } else if (sortConfig.direction === 'desc') {
+      if (sortConfig.direction === "asc") {
+        direction = "desc";
+      } else if (sortConfig.direction === "desc") {
         direction = null;
       } else {
-        direction = 'asc';
+        direction = "asc";
       }
     }
-    
+
     setSortConfig({ field: direction ? field : null, direction });
   };
 
@@ -88,26 +106,26 @@ export const TripTable = ({ trips, columnVisibility, columnOrder, onColumnOrderC
     return [...trips].sort((a, b) => {
       const aValue = a[sortConfig.field!];
       const bValue = b[sortConfig.field!];
-      
+
       // Handle null/undefined values
       if (aValue == null && bValue == null) return 0;
-      if (aValue == null) return sortConfig.direction === 'asc' ? 1 : -1;
-      if (bValue == null) return sortConfig.direction === 'asc' ? -1 : 1;
-      
+      if (aValue == null) return sortConfig.direction === "asc" ? 1 : -1;
+      if (bValue == null) return sortConfig.direction === "asc" ? -1 : 1;
+
       // Handle different data types
-      if (typeof aValue === 'string' && typeof bValue === 'string') {
+      if (typeof aValue === "string" && typeof bValue === "string") {
         const result = aValue.localeCompare(bValue);
-        return sortConfig.direction === 'asc' ? result : -result;
+        return sortConfig.direction === "asc" ? result : -result;
       }
-      
-      if (typeof aValue === 'number' && typeof bValue === 'number') {
+
+      if (typeof aValue === "number" && typeof bValue === "number") {
         const result = aValue - bValue;
-        return sortConfig.direction === 'asc' ? result : -result;
+        return sortConfig.direction === "asc" ? result : -result;
       }
-      
+
       // Fallback to string comparison
       const result = String(aValue).localeCompare(String(bValue));
-      return sortConfig.direction === 'asc' ? result : -result;
+      return sortConfig.direction === "asc" ? result : -result;
     });
   }, [trips, sortConfig]);
 
@@ -115,17 +133,23 @@ export const TripTable = ({ trips, columnVisibility, columnOrder, onColumnOrderC
     if (sortConfig.field !== field) {
       return <ChevronsUpDown className="h-4 w-4 opacity-50" />;
     }
-    
-    if (sortConfig.direction === 'asc') {
+
+    if (sortConfig.direction === "asc") {
       return <ChevronUp className="h-4 w-4" />;
-    } else if (sortConfig.direction === 'desc') {
+    } else if (sortConfig.direction === "desc") {
       return <ChevronDown className="h-4 w-4" />;
     }
-    
+
     return <ChevronsUpDown className="h-4 w-4 opacity-50" />;
   };
 
-  const DraggableHeader = ({ field, children }: { field: ColumnKey; children: React.ReactNode }) => {
+  const DraggableHeader = ({
+    field,
+    children,
+  }: {
+    field: ColumnKey;
+    children: React.ReactNode;
+  }) => {
     const {
       attributes,
       listeners,
@@ -143,9 +167,9 @@ export const TripTable = ({ trips, columnVisibility, columnOrder, onColumnOrderC
     if (!columnVisibility[field]) return null;
 
     return (
-      <th 
-        ref={setNodeRef} 
-        style={style} 
+      <th
+        ref={setNodeRef}
+        style={style}
         className={cn(
           "p-3 text-left font-medium bg-muted/50 relative",
           isDragging && "z-50 opacity-50"
@@ -176,33 +200,41 @@ export const TripTable = ({ trips, columnVisibility, columnOrder, onColumnOrderC
   };
 
   const formatTime = (time?: string) => {
-    if (!time) return '-';
+    if (!time) return "-";
     return time;
   };
 
   const formatPercentage = (value?: number) => {
-    if (value === undefined || value === null) return '-';
+    if (value === undefined || value === null) return "-";
     return `${value.toFixed(1)}%`;
   };
 
   const getStatusClassName = (status: string) => {
     switch (status) {
-      case 'VIAGEM PLANEJADA E REALIZADA':
-        return 'status-completed';
-      case 'EM ANDAMENTO':
-        return 'status-in-progress';
-      case 'NÃO INICIADA':
-        return 'status-not-started';
+      case "VIAGEM PLANEJADA E REALIZADA":
+        return "status-completed";
+      case "EM ANDAMENTO":
+        return "status-in-progress";
+      case "NÃO INICIADA":
+        return "status-not-started";
       default:
-        return 'status-not-started';
+        return "status-not-started";
     }
   };
 
   if (isMobile) {
     // Mobile Table Layout with configurable columns
-    const mobileColumns: ColumnKey[] = ['status', 'line', 'route', 'date', 'completion'];
-    const visibleMobileColumns = mobileColumns.filter(col => columnVisibility[col]);
-    
+    const mobileColumns: ColumnKey[] = [
+      "status",
+      "line",
+      "route",
+      "date",
+      "completion",
+    ];
+    const visibleMobileColumns = mobileColumns.filter(
+      (col) => columnVisibility[col]
+    );
+
     return (
       <>
         <div className="w-full overflow-auto p-2">
@@ -214,35 +246,37 @@ export const TripTable = ({ trips, columnVisibility, columnOrder, onColumnOrderC
                     {t(columnKey)}
                   </th>
                 ))}
-                <th className="p-2 text-left font-medium">{t('actions')}</th>
               </tr>
             </thead>
             <tbody>
               {sortedTrips.map((trip) => (
-                <tr key={trip.id} className="border-b hover:bg-muted/50 transition-colors">
+                <tr
+                  key={trip.id || trip.scheduleId}
+                  className="border-b hover:bg-muted/50 transition-colors"
+                >
                   {visibleMobileColumns.map((columnKey) => {
                     const renderCell = () => {
                       switch (columnKey) {
-                        case 'status':
+                        case "status":
                           return (
                             <div className="flex items-center">
                               <StatusIcon status={trip.status} />
                             </div>
                           );
-                        case 'line':
-                          return <span className="font-medium">{trip.line.substring(0, 5)}...</span>;
-                        case 'route':
+                        case "line":
                           return (
-                            <Badge variant="outline" className="text-xs">
-                              {t(trip.route)}
-                            </Badge>
+                            <span className="font-medium">
+                              {trip.line.substring(0, 5)}...
+                            </span>
                           );
-                        case 'date':
+                        case "route":
+                          return t(trip.route);
+                        case "date":
                           return trip.date;
-                        case 'completion':
+                        case "completion":
                           return formatPercentage(trip.completion);
                         default:
-                          return '-';
+                          return "-";
                       }
                     };
 
@@ -267,10 +301,11 @@ export const TripTable = ({ trips, columnVisibility, columnOrder, onColumnOrderC
             </tbody>
           </table>
         </div>
-        
-        <TripModal 
-          isOpen={modalOpen} 
-          onClose={() => setModalOpen(false)} 
+
+        <TripModal
+          isOpen={modalOpen}
+          onClose={() => setModalOpen(false)}
+          trip={selectedTrip}
         />
       </>
     );
@@ -287,73 +322,81 @@ export const TripTable = ({ trips, columnVisibility, columnOrder, onColumnOrderC
         <div className="w-full overflow-auto">
           <table className="w-full text-sm">
             <thead>
-              <SortableContext items={columnOrder} strategy={horizontalListSortingStrategy}>
+              <SortableContext
+                items={columnOrder}
+                strategy={horizontalListSortingStrategy}
+              >
                 <tr className="border-b bg-muted/50">
                   {columnOrder.map((columnKey) => (
                     <DraggableHeader key={columnKey} field={columnKey}>
                       {t(columnKey)}
                     </DraggableHeader>
                   ))}
-                  <th className="p-3 text-left font-medium bg-muted/50">{t('actions')}</th>
+                  <th className="p-3 text-left font-medium bg-muted/50">
+                    {t("actions")}
+                  </th>
                 </tr>
               </SortableContext>
             </thead>
             <tbody>
               {sortedTrips.map((trip) => (
-                <tr key={trip.id} className="border-b hover:bg-muted/50 transition-colors">
+                <tr
+                  key={trip.id || trip.scheduleId}
+                  className="border-b hover:bg-muted/50 transition-colors"
+                >
                   {columnOrder.map((columnKey) => {
                     if (!columnVisibility[columnKey]) return null;
-                    
+
                     const renderCell = () => {
                       switch (columnKey) {
-                        case 'date':
+                        case "date":
                           return trip.date;
-                        case 'status':
+                        case "status":
                           return (
                             <div className="flex items-center gap-2">
                               <StatusIcon status={trip.status} />
                             </div>
                           );
-                        case 'line':
-                          return <span className="font-medium">{trip.line.substring(0, 5)}...</span>;
-                        case 'route':
+                        case "line":
                           return (
-                            <Badge variant="outline" className="text-xs">
-                              {t(trip.route)}
-                            </Badge>
+                            <span className="font-medium" title={trip.line}>
+                              {trip.line.substring(0, 5)}...
+                            </span>
                           );
-                        case 'execution':
+                        case "route":
+                          return t(trip.route);
+                        case "execution":
                           return t(trip.execution);
-                        case 'plannedVehicle':
-                          return trip.plannedVehicle || '-';
-                        case 'realVehicle':
-                          return trip.realVehicle || '-';
-                        case 'tab':
-                          return trip.tab || '-';
-                        case 'passengers':
-                          return trip.passengers || '-';
-                        case 'plannedStart':
+                        case "plannedVehicle":
+                          return trip.plannedVehicle || "-";
+                        case "realVehicle":
+                          return trip.realVehicle || "-";
+                        case "tab":
+                          return trip.tab || "-";
+                        case "passengers":
+                          return trip.passengers || "-";
+                        case "plannedStart":
                           return formatTime(trip.plannedStart);
-                        case 'realStart':
+                        case "realStart":
                           return formatTime(trip.realStart);
-                        case 'startDiff':
-                          return trip.startDiff ?? '-';
-                        case 'plannedEnd':
+                        case "startDiff":
+                          return trip.startDiff ?? "-";
+                        case "plannedEnd":
                           return formatTime(trip.plannedEnd);
-                        case 'realEnd':
+                        case "realEnd":
                           return formatTime(trip.realEnd);
-                        case 'endDiff':
-                          return trip.endDiff ?? '-';
-                        case 'headway':
-                          return trip.headway ?? '-';
-                        case 'driver':
-                          return trip.driver || '-';
-                        case 'travelTime':
-                          return trip.travelTime || '-';
-                        case 'completion':
+                        case "endDiff":
+                          return trip.endDiff ?? "-";
+                        case "headway":
+                          return trip.headway ?? "-";
+                        case "driver":
+                          return trip.driver || "-";
+                        case "travelTime":
+                          return trip.travelTime || "-";
+                        case "completion":
                           return formatPercentage(trip.completion);
                         default:
-                          return '-';
+                          return "-";
                       }
                     };
 
@@ -378,10 +421,11 @@ export const TripTable = ({ trips, columnVisibility, columnOrder, onColumnOrderC
           </table>
         </div>
       </DndContext>
-      
-      <TripModal 
-        isOpen={modalOpen} 
-        onClose={() => setModalOpen(false)} 
+
+      <TripModal
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        trip={selectedTrip}
       />
     </>
   );
