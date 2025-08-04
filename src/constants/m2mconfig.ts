@@ -2,6 +2,8 @@
 // const matcher = ["zn4"];
 // const urlFila = `https://${matcher[0]}.m2mcontrol.com.br/`;
 
+import api from "@/services/api.ts";
+
 const urlFila = "";
 
 let ZONE = "zn0"; // valor por defeito
@@ -30,10 +32,11 @@ const SERVICE = `https://${zoneValue}.m2mcontrol.com.br/api/controlePartida`;
 const VIAGEM_PLANEJAMENTO_API_HOST = zoneValue.includes("0")
     ? `https://planejamento-viagem-api-hmg.m2mcontrol.com.br`
     : `https://planejamento-viagem-api.sinopticoplus.com`;
-
 export const ApiPrefix = {
   SERVICE_API: `${SERVICE_API_HOST}/service-api`,
   SERVICE: SERVICE,
   DASHBOARD_API: `${DASHBOARD_API_HOST}/api`,
   VIAGEM_PLANEJAMENTO_API: `${VIAGEM_PLANEJAMENTO_API_HOST}/planejamento-viagem-api`,
 };
+
+

@@ -22,21 +22,29 @@ const App = () => {
       try {
         // Initialize zone first (for backward compatibility)
         initializeZone();
-        
+
         // Get token and zone from URL parameters
-        const urlParams = new URLSearchParams(window.location.search);
-        const token = urlParams.get('token');
-        const zone = urlParams.get('zn');
+        function getParam(name) {
+          const queryString =
+            window.location.search || window.location.hash.split("?")[1] || "";
+          const params = new URLSearchParams(queryString);
+          return params.get(name);
+        }
+
+        const token = getParam("token");
+        const zone = getParam("env");
 
         // Initialize authentication if token is available
-        if (token || localStorage.getItem('token')) {
+        if (token || localStorage.getItem("token")) {
           await initGetLocalStorage(token, zone);
         }
-        
+
         setIsInitialized(true);
       } catch (error) {
-        console.error('Failed to initialize app:', error);
-        setInitError(error instanceof Error ? error.message : 'Initialization failed');
+        console.error("Failed to initialize app:", error);
+        setInitError(
+          error instanceof Error ? error.message : "Initialization failed"
+        );
         setIsInitialized(true); // Still allow app to load, may work with mock data
       }
     };
