@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -7,14 +7,20 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Calendar, Clock, X } from 'lucide-react';
+import { Trip } from '@/types/trip';
+import { useToast } from '@/hooks/use-toast';
+import { useTrips } from '@/hooks/useTrips';
 
 interface TripRegistrationModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSave?: (tripData: any) => void;
+  trip?: Trip | null;
 }
 
-export const TripRegistrationModal = ({ isOpen, onClose, onSave }: TripRegistrationModalProps) => {
+export const TripRegistrationModal = ({ isOpen, onClose, onSave, trip }: TripRegistrationModalProps) => {
+  const { toast } = useToast();
+  const { editTrip } = useTrips();
   const [formData, setFormData] = useState({
     linha: '',
     trajeto: '',
@@ -32,29 +38,180 @@ export const TripRegistrationModal = ({ isOpen, onClose, onSave }: TripRegistrat
     alocarViagem: false,
   });
 
-  const handleSave = () => {
-    console.log('Salvando viagem:', formData);
-    if (onSave) {
-      onSave(formData);
+  useEffect(() => {
+    if (trip && isOpen) {
+      // Populate form with trip data when editing
+      setFormData({
+        linha: trip.line || '',
+        trajeto: trip.route === 'ida' ? 'Ida' : trip.route === 'volta' ? 'Volta' : trip.route || '',
+        dataInicial: trip.date || '',
+        horaInicial: trip.plannedStart || '00:00:00',
+        dataFinal: trip.date || '',
+        horaFinal: trip.plannedEnd || '23:59:59',
+        veiculo: trip.plannedVehicle || trip.realVehicle || '',
+        motorista: trip.driver || '',
+        chegadaAoPonto: trip.date || '',
+        horaChegada: trip.realStart || trip.plannedStart || '',
+        quantidadePassageiros: trip.passengers?.toString() || '',
+        motivosPredefinidos: 'MANOBRA OPERACIONAL',
+        observacao: '',
+        alocarViagem: false,
+      });
+      console.log('Preenchendo formulário com dados da viagem:', {
+        trip,
+        formData: {
+          linha: trip.line,
+          trajeto: trip.route,
+          dataInicial: trip.date,
+          veiculo: trip.plannedVehicle || trip.realVehicle,
+          motorista: trip.driver,
+          passageiros: trip.passengers
+        }
+      });
+    } else if (!trip && isOpen) {
+      // Reset form for new trip
+      setFormData({
+        linha: '',
+        trajeto: '',
+        dataInicial: '',
+        horaInicial: '00:00:00',
+        dataFinal: '',
+        horaFinal: '23:59:59',
+        veiculo: '',
+        motorista: '',
+        chegadaAoPonto: '',
+        horaChegada: '',
+        quantidadePassageiros: '',
+        motivosPredefinidos: '',
+        observacao: '',
+        alocarViagem: false,
+      });
     }
-    onClose();
+  }, [trip, isOpen]);
+
+  const handleSave = async () => {
+    if (trip) {
+      await handleEditTrip(false);
+    } else {
+      console.log('Salvando viagem:', formData);
+      if (onSave) {
+        onSave(formData);
+      }
+      onClose();
+    }
   };
 
-  const handleSaveAndAllocate = () => {
-    const dataWithAllocation = { ...formData, alocarViagem: true };
-    console.log('Salvando e alocando viagem:', dataWithAllocation);
-    if (onSave) {
-      onSave(dataWithAllocation);
+  const handleSaveAndAllocate = async () => {
+    if (trip) {
+      await handleEditTrip(true);
+    } else {
+      const dataWithAllocation = { ...formData, alocarViagem: true };
+      console.log('Salvando e alocando viagem:', dataWithAllocation);
+      if (onSave) {
+        onSave(dataWithAllocation);
+      }
+      onClose();
     }
-    onClose();
+  };
+
+  const handleEditTrip = async (allocate: boolean = false) => {
+    try {
+      const editData = {
+        inicio: `${formData.dataInicial} ${formData.horaInicial}`,
+        fim: `${formData.dataFinal} ${formData.horaFinal}`,
+        linha: {
+          _id: "555b4eadaecc1a6638f3ab2b",
+          clienteId: 209,
+          descr: trip?.line || "",
+          numero: "10",
+          gtfsRouteId: "20000101130",
+          trajetos: [],
+          veiculos: [],
+          empresas: [],
+          consorcio: { consorcioId: 39, consorcio: "TransOeste" },
+          consorcios: [{ _id: "687f850f561b4717c6d8651e", consorcio: "TransOeste", consorcioId: 39 }],
+          inverterLinha: false,
+          id: "555b4eadaecc1a6638f3ab2b"
+        },
+        trajeto: {
+          sentido: "volta",
+          wayPoints: [],
+          kmTrajeto: 38.83,
+          gtfsShapeId: "v2bf",
+          endPoint: { _id: "555b32f80850536438063665", nome: "Terminal Santa Cruz" },
+          startPoint: { gps: { type: "Point", coordinates: [-43.36510509252549, -23.000987268667515] } },
+          nome: "10 - ALVORADA X SANTA CRUZ (EXPRESSO) [VOLTA]",
+          _id: "555b4eadaecc1a6638f3ab2a",
+          nomeExibicao: "10 - ALVORADA X SANTA CRUZ (EXPRESSO) [VOLTA]",
+          numeroLinha: "10"
+        },
+        veiculo: {
+          id_veiculo: 15328,
+          id_veiculo_tipo: 1,
+          id_cliente: 209,
+          id_empresa: 2580,
+          cod_veiculo: "901011",
+          vl_prefixo: "901011",
+          vl_placa: "RIV8A74",
+          empresa: {
+            empresaId: 2580,
+            nomeEmpresa: "UNIDADE 2",
+            identificador: "22"
+          }
+        },
+        motivo: "MANOBRA OPERACIONAL",
+        mensagemObs: {
+          mensagem: formData.observacao || "MANOBRA OPERACIONAL",
+          dataAtualizacao: new Date().toISOString().replace('T', ' ').slice(0, -5),
+          usuarioCriacao: "vitor.coelho"
+        },
+        nomeUsuario: "Vitor",
+        transmissao: {
+          idPontoInteresse: "57913be9d4ca5bcc77cde4bd",
+          transmissao: {
+            gps: { coordinates: [-43.36510509252549, -23.000987268667515] },
+            dataTransmissao: `${formData.dataInicial} 00:00:00`
+          },
+          eventoTransmissao: 2,
+          idTrajeto: "555b4eadaecc1a6638f3ab2a"
+        },
+        alocada: allocate,
+        idPlanejamento: "385768",
+        horarioInicioProgramado: new Date(`${formData.dataInicial}T${formData.horaInicial}`).toISOString(),
+        horarioFimProgramado: new Date(`${formData.dataFinal}T${formData.horaFinal}`).toISOString(),
+        toleranciaAdiantamento: 2,
+        toleranciaAtraso: 5,
+        idHorario: 13395866,
+        Func: "edicao_viagem",
+        nomeCliente: "MOBI RIO",
+        idCliente: "209",
+        id_usuario: "2973"
+      };
+
+      await editTrip(editData);
+      
+      toast({
+        title: "Viagem editada com sucesso",
+        description: allocate ? "Viagem editada e alocada" : "Viagem editada",
+      });
+      
+      onClose();
+    } catch (error) {
+      console.error('Erro ao editar viagem:', error);
+      toast({
+        title: "Erro ao editar viagem",
+        description: "Ocorreu um erro ao tentar editar a viagem",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="w-[95vw] max-w-2xl max-h-[90vh] overflow-y-auto mx-auto">
         <DialogHeader className="bg-primary text-primary-foreground p-4 -m-6 mb-6">
           <DialogTitle className="flex items-center justify-between">
-            <span>CADASTRAR VIAGEM</span>
+            <span>{trip ? 'EDITAR VIAGEM' : 'CADASTRAR VIAGEM'}</span>
             <Button 
               variant="ghost" 
               size="icon"
@@ -101,7 +258,7 @@ export const TripRegistrationModal = ({ isOpen, onClose, onSave }: TripRegistrat
           </div>
 
           {/* Data Inicial e Final */}
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <Label htmlFor="dataInicial" className="text-sm font-medium">Data Inicial:</Label>
               <div className="relative mt-1">
@@ -150,7 +307,7 @@ export const TripRegistrationModal = ({ isOpen, onClose, onSave }: TripRegistrat
           </div>
 
           {/* Veículo e Motorista */}
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <Label htmlFor="veiculo" className="text-sm font-medium">Veículo</Label>
               <Select value={formData.veiculo} onValueChange={(value) => setFormData({ ...formData, veiculo: value })}>
@@ -256,7 +413,7 @@ export const TripRegistrationModal = ({ isOpen, onClose, onSave }: TripRegistrat
           <p className="text-sm text-muted-foreground italic">*Campos Obrigatórios</p>
         </div>
 
-        <div className="flex justify-end gap-3 pt-4 border-t">
+        <div className="flex flex-col sm:flex-row justify-end gap-3 pt-4 border-t">
           <Button 
             onClick={handleSaveAndAllocate}
             className="bg-blue-500 hover:bg-blue-600 text-white"

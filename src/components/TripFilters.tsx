@@ -1,20 +1,14 @@
-import { useTranslation } from "react-i18next";
-import { FilterOptions } from "@/types/trip";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Switch } from "@/components/ui/switch";
-import { Filter, Calendar, Clock, Search } from "lucide-react";
-import { ILinha } from "@/types/line";
-import { useTrips } from "@/hooks/useTrips";
-import { useToast } from "@/hooks/use-toast";
+import { useTranslation } from 'react-i18next';
+import { FilterOptions } from '@/types/trip';
+import { getUniqueRoutes, getUniqueConsortiums } from '@/data/mockData';
+import { linesService } from '@/services/api';
+import { useState, useEffect } from 'react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Card } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Switch } from '@/components/ui/switch';
+import { Filter, Calendar, Clock, Search } from 'lucide-react';
 
 interface TripFiltersProps {
   filters: FilterOptions;
@@ -23,48 +17,75 @@ interface TripFiltersProps {
   isVisible: boolean;
 }
 
-export const TripFilters = ({
-  filters,
-  onFiltersChange,
-  onConsult,
-  isVisible,
-}: TripFiltersProps) => {
+interface LineData {
+  _id: string;
+  numero: string;
+  descr: string;
+  trajetos: TrajetoData[];
+  id: string;
+}
+
+interface TrajetoData {
+  _id: string;
+  nome: string;
+  sentido: string;
+  nomeExibicao: string;
+}
+
+export const TripFilters = ({ filters, onFiltersChange, onConsult, isVisible }: TripFiltersProps) => {
   const { t } = useTranslation();
-  const { toast } = useToast();
-  const { lines, consortiums, routes, setRoutes, isLoading } = useTrips();
+  
+  const [lines, setLines] = useState<LineData[]>([]);
+  const [loadingLines, setLoadingLines] = useState(false);
+  const [availableTrajetos, setAvailableTrajetos] = useState<TrajetoData[]>([]);
 
-  const getUniqueRoutes = (line: ILinha): any[] => {
-    return Array.from(line.trajetos);
-  };
+  const uniqueRoutes = getUniqueRoutes();
+  const uniqueConsortiums = getUniqueConsortiums();
 
-  const handleFilterChange = (
-    key: keyof FilterOptions,
-    value: string | boolean | number
-  ) => {
-    const newFilters = {
-      ...filters,
-      [key]: typeof value === "string" && value === "all" ? "" : value,
+  useEffect(() => {
+    const fetchLines = async () => {
+      try {
+        setLoadingLines(true);
+        const linesData = await linesService.getLines();
+        setLines(linesData);
+      } catch (error) {
+        console.error('Error fetching lines:', error);
+        setLines([]);
+      } finally {
+        setLoadingLines(false);
+      }
     };
 
-    // Atualiza os filtros
-    onFiltersChange(newFilters);
+    fetchLines();
+  }, []);
 
-    // Se mudou a linha, atualiza as rotas disponíveis
-    if (key === "line") {
-      const line = lines.find((ln) => ln._id === value);
-      if (line) {
-        setRoutes(getUniqueRoutes(line));
-      } else {
-        setRoutes([]); // Limpa as rotas se "todas" for selecionada
-      }
-
-      // Limpa a rota selecionada quando muda a linha
-      onFiltersChange({
-        ...newFilters,
-        route: "",
-      });
-    }
+  const handleFilterChange = (key: keyof FilterOptions, value: string | boolean | number) => {
+    onFiltersChange({
+      ...filters,
+      [key]: typeof value === 'string' && value === 'all' ? '' : value,
+    });
   };
+
+  // Update available trajetos when line selection changes
+  useEffect(() => {
+    if (filters.line) {
+      const selectedLine = lines.find(line => 
+        `${line.numero} - ${line.descr}` === filters.line
+      );
+      
+      if (selectedLine) {
+        setAvailableTrajetos(selectedLine.trajetos || []);
+      } else {
+        setAvailableTrajetos([]);
+      }
+    } else {
+      setAvailableTrajetos([]);
+      // Clear trajeto selection when line is cleared
+      if (filters.trajeto) {
+        handleFilterChange('trajeto', '');
+      }
+    }
+  }, [filters.line, lines]);
 
   const handleConsult = () => {
     onConsult?.();
@@ -76,63 +97,86 @@ export const TripFilters = ({
     <Card className="p-4 m-4 shadow-lg">
       <div className="flex items-center gap-2 mb-4">
         <Filter className="h-4 w-4 text-primary" />
-        <h3 className="font-semibold text-sm text-foreground">
-          {t("filters")}
-        </h3>
+        <h3 className="font-semibold text-sm text-foreground">{t('filters')}</h3>
       </div>
-
+      
       <div className="space-y-6">
         {/* Basic Filters */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {/* Line Filter */}
           <div className="space-y-2">
             <label className="text-sm font-medium text-muted-foreground">
-              {t("filterLine")}
+              {t('filterLine')}
             </label>
             <Select
-              value={filters.line || "all"}
-              onValueChange={(value) => handleFilterChange("line", value)}
+              value={filters.line || 'all'}
+              onValueChange={(value) => handleFilterChange('line', value)}
             >
               <SelectTrigger className="w-full">
-                <SelectValue placeholder={t("selectLine")} />
+                <SelectValue placeholder={t('selectLine')} />
               </SelectTrigger>
-              <SelectContent className="max-h-60">
-                <SelectItem value="all">{t("selectLine")}</SelectItem>
-                {lines.map((line) => (
-                  <SelectItem key={line._id} value={line._id}>
-                    {line.descr.length > 45
-                      ? `${line.descr.substring(0, 45)}...`
-                      : line.descr}
-                  </SelectItem>
-                ))}
+              <SelectContent className="max-h-60 bg-popover border shadow-lg z-50">
+                <SelectItem value="all">{t('allLines')}</SelectItem>
+                {loadingLines ? (
+                  <SelectItem value="loading" disabled>Carregando linhas...</SelectItem>
+                ) : (
+                  lines
+                    .filter(line => line.numero && line.descr) // Filter out items with empty values
+                    .map((line) => {
+                      const value = `${line.numero} - ${line.descr}`;
+                      return (
+                        <SelectItem key={line.id || line._id} value={value}>
+                          {line.numero} - {line.descr.substring(0, 30)}{line.descr.length > 30 ? '...' : ''}
+                        </SelectItem>
+                      );
+                    })
+                )}
               </SelectContent>
             </Select>
           </div>
 
-          {/* Route Filter */}
+          {/* Trajeto Filter */}
           <div className="space-y-2">
             <label className="text-sm font-medium text-muted-foreground">
-              {t("filterRoute")}
+              Trajeto
             </label>
             <Select
-              value={filters.route || "all"}
-              onValueChange={(value) => handleFilterChange("route", value)}
-              disabled={!filters.line} // Desabilita se nenhuma linha foi selecionada
+              value={filters.trajeto || 'all'}
+              onValueChange={(value) => handleFilterChange('trajeto', value)}
+              disabled={!filters.line || filters.line === 'all' || availableTrajetos.length === 0}
             >
               <SelectTrigger className="w-full">
-                <SelectValue
-                  placeholder={
-                    !filters.line
-                      ? "Selecione uma linha primeiro"
-                      : t("selectRoute")
-                  }
-                />
+                <SelectValue placeholder="Selecione um trajeto" />
               </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">{t("allRoutes")}</SelectItem>
-                {routes.map((route) => (
-                  <SelectItem key={route._id} value={route.sentido}>
-                    {route.nome}
+              <SelectContent className="max-h-60 bg-popover border shadow-lg z-50">
+                <SelectItem value="all">Todos os Trajetos</SelectItem>
+                {availableTrajetos
+                  .filter(trajeto => trajeto.nome && trajeto.nomeExibicao) // Filter out items with empty values
+                  .map((trajeto) => (
+                    <SelectItem key={trajeto._id} value={trajeto.nome || trajeto.nomeExibicao}>
+                      {trajeto.nomeExibicao} ({trajeto.sentido})
+                    </SelectItem>
+                  ))
+                }
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-muted-foreground">
+              {t('filterRoute')}
+            </label>
+            <Select
+              value={filters.route || 'all'}
+              onValueChange={(value) => handleFilterChange('route', value)}
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder={t('selectRoute')} />
+              </SelectTrigger>
+              <SelectContent className="bg-popover border shadow-lg z-50">
+                <SelectItem value="all">{t('allRoutes')}</SelectItem>
+                {uniqueRoutes.map((route) => (
+                  <SelectItem key={route} value={route}>
+                    {t(route)}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -142,23 +186,20 @@ export const TripFilters = ({
           {/* Consortium Filter */}
           <div className="space-y-2">
             <label className="text-sm font-medium text-muted-foreground">
-              {t("filterConsortium")}
+              {t('filterConsortium')}
             </label>
             <Select
-              value={filters.consortium || "all"}
-              onValueChange={(value) => handleFilterChange("consortium", value)}
+              value={filters.consortium || 'all'}
+              onValueChange={(value) => handleFilterChange('consortium', value)}
             >
               <SelectTrigger className="w-full">
-                <SelectValue placeholder={t("selectConsortium")} />
+                <SelectValue placeholder={t('selectConsortium')} />
               </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">{t("selectConsortium")}</SelectItem>
-                {consortiums.map((consortium) => (
-                  <SelectItem
-                    key={consortium.consorcioId}
-                    value={consortium.consorcio}
-                  >
-                    {consortium.consorcio}
+              <SelectContent className="bg-popover border shadow-lg z-50">
+                <SelectItem value="all">{t('allConsortiums')}</SelectItem>
+                {uniqueConsortiums.map((consortium) => (
+                  <SelectItem key={consortium} value={consortium}>
+                    {consortium}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -180,9 +221,7 @@ export const TripFilters = ({
                   <Input
                     type="date"
                     value={filters.startDate}
-                    onChange={(e) =>
-                      handleFilterChange("startDate", e.target.value)
-                    }
+                    onChange={(e) => handleFilterChange('startDate', e.target.value)}
                   />
                 </div>
                 <div className="space-y-2">
@@ -190,9 +229,7 @@ export const TripFilters = ({
                   <Input
                     type="time"
                     value={filters.startTime}
-                    onChange={(e) =>
-                      handleFilterChange("startTime", e.target.value)
-                    }
+                    onChange={(e) => handleFilterChange('startTime', e.target.value)}
                   />
                 </div>
               </div>
@@ -209,9 +246,7 @@ export const TripFilters = ({
                   <Input
                     type="date"
                     value={filters.endDate}
-                    onChange={(e) =>
-                      handleFilterChange("endDate", e.target.value)
-                    }
+                    onChange={(e) => handleFilterChange('endDate', e.target.value)}
                   />
                 </div>
                 <div className="space-y-2">
@@ -219,9 +254,7 @@ export const TripFilters = ({
                   <Input
                     type="time"
                     value={filters.endTime}
-                    onChange={(e) =>
-                      handleFilterChange("endTime", e.target.value)
-                    }
+                    onChange={(e) => handleFilterChange('endTime', e.target.value)}
                   />
                 </div>
               </div>
@@ -234,15 +267,13 @@ export const TripFilters = ({
           <div className="flex items-center space-x-2 mb-4">
             <Switch
               checked={filters.realTimeEnabled}
-              onCheckedChange={(checked) =>
-                handleFilterChange("realTimeEnabled", checked)
-              }
+              onCheckedChange={(checked) => handleFilterChange('realTimeEnabled', checked)}
             />
             <label className="text-sm font-medium text-foreground">
               Filtro Tempo Real
             </label>
           </div>
-
+          
           {filters.realTimeEnabled && (
             <div className="ml-6 space-y-2 bg-muted/50 p-3 rounded-md">
               <label className="text-xs text-muted-foreground">
@@ -254,22 +285,14 @@ export const TripFilters = ({
                   min="1"
                   max="1440"
                   value={filters.realTimeMinutes}
-                  onChange={(e) =>
-                    handleFilterChange(
-                      "realTimeMinutes",
-                      parseInt(e.target.value) || 30
-                    )
-                  }
+                  onChange={(e) => handleFilterChange('realTimeMinutes', parseInt(e.target.value) || 30)}
                   className="w-20"
                   placeholder="30"
                 />
-                <span className="text-xs text-muted-foreground">
-                  minutos atrás
-                </span>
+                <span className="text-xs text-muted-foreground">minutos atrás</span>
               </div>
               <p className="text-xs text-muted-foreground">
-                Aplica filtro nos horários de partida real e partida planejada
-                das viagens. Auto-refresh ativo a cada 60 segundos.
+                Aplica filtro nos horários de partida real e partida planejada das viagens
               </p>
             </div>
           )}
@@ -277,13 +300,9 @@ export const TripFilters = ({
 
         {/* Action Buttons */}
         <div className="flex justify-end gap-3 pt-4 border-t">
-          <Button
-            onClick={handleConsult}
-            className="flex items-center gap-2"
-            disabled={isLoading}
-          >
+          <Button onClick={handleConsult} className="flex items-center gap-2">
             <Search className="h-4 w-4" />
-            {isLoading ? "Consultando..." : "Consultar"}
+            Consultar
           </Button>
         </div>
       </div>
