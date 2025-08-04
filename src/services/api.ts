@@ -35,11 +35,5 @@ export const linesService = {
   }
 };
 
-export const tripsService = {
-  editTrip: async (tripData: any) => {
-    const response = await api.post('/api/controlePartida/209/editarviagem', tripData);
-    return response.data;
-  }
-};
 
 export default api;

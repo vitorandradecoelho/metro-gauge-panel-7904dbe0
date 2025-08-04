@@ -8,8 +8,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Calendar, Clock, X } from 'lucide-react';
 import { Trip } from '@/types/trip';
-import { tripsService } from '@/services/api';
 import { useToast } from '@/hooks/use-toast';
+import { useTrips } from '@/hooks/useTrips';
 
 interface TripRegistrationModalProps {
   isOpen: boolean;
@@ -20,6 +20,7 @@ interface TripRegistrationModalProps {
 
 export const TripRegistrationModal = ({ isOpen, onClose, onSave, trip }: TripRegistrationModalProps) => {
   const { toast } = useToast();
+  const { editTrip } = useTrips();
   const [formData, setFormData] = useState({
     linha: '',
     trajeto: '',
@@ -187,7 +188,7 @@ export const TripRegistrationModal = ({ isOpen, onClose, onSave, trip }: TripReg
         id_usuario: "2973"
       };
 
-      await tripsService.editTrip(editData);
+      await editTrip(editData);
       
       toast({
         title: "Viagem editada com sucesso",
