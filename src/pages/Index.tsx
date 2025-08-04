@@ -47,6 +47,11 @@ const Index = () => {
     setActiveStatus,
   } = useTrips();
 
+  console.log("🔍 Index - trips:", trips.length);
+  console.log("🔍 Index - filteredTrips:", filteredTrips.length);
+  console.log("🔍 Index - isLoading:", isLoading);
+  console.log("🔍 Index - error:", error);
+
   const statusCounts = useMemo(() => {
     const counts = {
       all: trips.length,

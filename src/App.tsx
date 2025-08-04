@@ -20,8 +20,10 @@ const App = () => {
   useEffect(() => {
     const initializeApp = async () => {
       try {
+        console.log("🚀 Iniciando aplicação...");
         // Initialize zone first (for backward compatibility)
         initializeZone();
+        console.log("✅ Zone inicializada");
 
         // Get token and zone from URL parameters
         function getParam(name) {
@@ -33,15 +35,23 @@ const App = () => {
 
         const token = getParam("token");
         const zone = getParam("env");
+        
+        console.log("🔑 Token:", token ? "Presente" : "Ausente");
+        console.log("🌍 Zone:", zone);
 
         // Initialize authentication if token is available
         if (token || localStorage.getItem("token")) {
+          console.log("🔄 Inicializando autenticação...");
           await initGetLocalStorage(token, zone);
+          console.log("✅ Autenticação inicializada");
+        } else {
+          console.log("⚠️ Sem token - usando modo mock");
         }
 
+        console.log("✅ App inicializada com sucesso");
         setIsInitialized(true);
       } catch (error) {
-        console.error("Failed to initialize app:", error);
+        console.error("❌ Falha ao inicializar app:", error);
         setInitError(
           error instanceof Error ? error.message : "Initialization failed"
         );
@@ -54,10 +64,15 @@ const App = () => {
 
   if (!isInitialized) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="flex items-center justify-center min-h-screen bg-background">
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-          <p>Inicializando aplicação...</p>
+          <p className="text-foreground">Inicializando aplicação...</p>
+          {initError && (
+            <p className="text-destructive text-sm mt-2">
+              Erro: {initError}
+            </p>
+          )}
         </div>
       </div>
     );
