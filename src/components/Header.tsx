@@ -62,7 +62,7 @@ export const Header = ({
               size={isMobile ? "icon" : "sm"}
               onClick={onRefresh}
               disabled={isLoading}
-              className={cn(isLoading && "animate-spin")}
+              className={cn(isLoading)}
             >
               <RefreshCw className="h-4 w-4" />
               {!isMobile && <span className="ml-2">{t('refresh')}</span>}

@@ -3,22 +3,11 @@ import { useTranslation } from 'react-i18next';
 import { Trip, ColumnVisibility, SortConfig, SortDirection, ColumnKey } from '@/types/trip';
 import { StatusIcon } from './StatusIcon';
 import { TripModal } from './TripModal';
-import { TripRegistrationModal } from './TripRegistrationModal';
-import { TripObservationModal } from './TripObservationModal';
-import { TripDeleteModal } from './TripDeleteModal';
-import { EditScheduleModal } from './EditScheduleModal';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
-import { 
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-  DropdownMenuSeparator
-} from '@/components/ui/dropdown-menu';
 import { cn } from '@/lib/utils';
-import { Eye, MoreVertical, Smartphone, Monitor, ChevronUp, ChevronDown, ChevronsUpDown, GripVertical, Edit, Delete, Copy, MessageSquare, Clock } from 'lucide-react';
+import { Eye, MoreVertical, Smartphone, Monitor, ChevronUp, ChevronDown, ChevronsUpDown, GripVertical } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import {
   DndContext,
@@ -49,10 +38,6 @@ export const TripTable = ({ trips, columnVisibility, columnOrder, onColumnOrderC
   const { t } = useTranslation();
   const [selectedTrip, setSelectedTrip] = useState<Trip | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
-  const [editModalOpen, setEditModalOpen] = useState(false);
-  const [observationModalOpen, setObservationModalOpen] = useState(false);
-  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
-  const [editScheduleModalOpen, setEditScheduleModalOpen] = useState(false);
   const [sortConfig, setSortConfig] = useState<SortConfig>({ field: null, direction: null });
   const isMobile = useIsMobile();
 
@@ -74,33 +59,9 @@ export const TripTable = ({ trips, columnVisibility, columnOrder, onColumnOrderC
     }
   };
 
-  const handleActionClick = (trip: Trip, action: string) => {
+  const handleActionClick = (trip: Trip) => {
     setSelectedTrip(trip);
-    
-    switch (action) {
-      case 'view':
-        setModalOpen(true);
-        break;
-      case 'edit':
-        // Abrir modal de cadastro/edição de viagem
-        setEditModalOpen(true);
-        break;
-      case 'observation':
-        setObservationModalOpen(true);
-        break;
-      case 'editSchedule':
-        setEditScheduleModalOpen(true);
-        break;
-      case 'duplicate':
-        // TODO: Implementar duplicação
-        console.log('Duplicar viagem:', trip);
-        break;
-      case 'delete':
-        setDeleteModalOpen(true);
-        break;
-      default:
-        break;
-    }
+    setModalOpen(true);
   };
 
   const handleSort = (field: keyof Trip) => {
@@ -292,81 +253,27 @@ export const TripTable = ({ trips, columnVisibility, columnOrder, onColumnOrderC
                     );
                   })}
                   <td className="p-2">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button
-                          size="icon-sm"
-                          variant="ghost"
-                          className="h-6 w-6"
-                        >
-                          <MoreVertical className="h-3 w-3" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end" className="w-48">
-                        <DropdownMenuItem onClick={() => handleActionClick(trip, 'view')}>
-                          <Eye className="h-3 w-3 mr-2" />
-                          {t('view')}
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => handleActionClick(trip, 'edit')}>
-                          <Edit className="h-3 w-3 mr-2" />
-                          {t('edit')}
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => handleActionClick(trip, 'observation')}>
-                          <MessageSquare className="h-3 w-3 mr-2" />
-                          Incluir Observação
-                        </DropdownMenuItem>
-                        {trip.status === 'NÃO INICIADA' && (
-                          <DropdownMenuItem onClick={() => handleActionClick(trip, 'editSchedule')}>
-                            <Clock className="h-3 w-3 mr-2" />
-                            Editar Horário
-                          </DropdownMenuItem>
-                        )}
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem 
-                          onClick={() => handleActionClick(trip, 'delete')}
-                          className="text-destructive focus:text-destructive"
-                        >
-                          <Delete className="h-3 w-3 mr-2" />
-                          Excluir Viagem
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
+                    <Button
+                      size="icon-sm"
+                      variant="ghost"
+                      onClick={() => handleActionClick(trip)}
+                      className="h-6 w-6"
+                    >
+                      <Eye className="h-3 w-3" />
+                    </Button>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
-      
-      <TripModal 
-        isOpen={modalOpen} 
-        onClose={() => setModalOpen(false)} 
-      />
-      
-      <TripRegistrationModal 
-        isOpen={editModalOpen} 
-        onClose={() => setEditModalOpen(false)}
-        trip={selectedTrip}
-      />
-      
-      <TripObservationModal 
-        isOpen={observationModalOpen} 
-        onClose={() => setObservationModalOpen(false)}
-        trip={selectedTrip}
-      />
-      
-      <TripDeleteModal 
-        isOpen={deleteModalOpen} 
-        onClose={() => setDeleteModalOpen(false)}
-        trip={selectedTrip}
-      />
-      
-      <EditScheduleModal 
-        isOpen={editScheduleModalOpen} 
-        onClose={() => setEditScheduleModalOpen(false)}
-      />
-    </>
-  );
+        
+        <TripModal 
+          isOpen={modalOpen} 
+          onClose={() => setModalOpen(false)} 
+        />
+      </>
+    );
   }
 
   // Desktop Table Layout
@@ -457,44 +364,13 @@ export const TripTable = ({ trips, columnVisibility, columnOrder, onColumnOrderC
                     );
                   })}
                   <td className="p-3">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button
-                          size="icon-sm"
-                          variant="ghost"
-                        >
-                          <MoreVertical className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end" className="w-48">
-                        <DropdownMenuItem onClick={() => handleActionClick(trip, 'view')}>
-                          <Eye className="h-4 w-4 mr-2" />
-                          {t('view')}
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => handleActionClick(trip, 'edit')}>
-                          <Edit className="h-4 w-4 mr-2" />
-                          {t('edit')}
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => handleActionClick(trip, 'observation')}>
-                          <MessageSquare className="h-4 w-4 mr-2" />
-                          Incluir Observação
-                        </DropdownMenuItem>
-                        {trip.status === 'NÃO INICIADA' && (
-                          <DropdownMenuItem onClick={() => handleActionClick(trip, 'editSchedule')}>
-                            <Clock className="h-4 w-4 mr-2" />
-                            Editar Horário
-                          </DropdownMenuItem>
-                        )}
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem 
-                          onClick={() => handleActionClick(trip, 'delete')}
-                          className="text-destructive focus:text-destructive"
-                        >
-                          <Delete className="h-4 w-4 mr-2" />
-                          Excluir Viagem
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
+                    <Button
+                      size="icon-sm"
+                      variant="ghost"
+                      onClick={() => handleActionClick(trip)}
+                    >
+                      <Eye className="h-4 w-4" />
+                    </Button>
                   </td>
                 </tr>
               ))}
@@ -502,34 +378,11 @@ export const TripTable = ({ trips, columnVisibility, columnOrder, onColumnOrderC
           </table>
         </div>
       </DndContext>
-        
-        <TripModal 
-          isOpen={modalOpen} 
-          onClose={() => setModalOpen(false)} 
-        />
-        
-        <TripRegistrationModal 
-          isOpen={editModalOpen} 
-          onClose={() => setEditModalOpen(false)}
-          trip={selectedTrip}
-        />
-        
-        <TripObservationModal 
-          isOpen={observationModalOpen} 
-          onClose={() => setObservationModalOpen(false)}
-          trip={selectedTrip}
-        />
-        
-        <TripDeleteModal 
-          isOpen={deleteModalOpen} 
-          onClose={() => setDeleteModalOpen(false)}
-          trip={selectedTrip}
-        />
-        
-        <EditScheduleModal 
-          isOpen={editScheduleModalOpen} 
-          onClose={() => setEditScheduleModalOpen(false)}
-        />
-      </>
-    );
+      
+      <TripModal 
+        isOpen={modalOpen} 
+        onClose={() => setModalOpen(false)} 
+      />
+    </>
+  );
 };

@@ -1,13 +1,16 @@
 export interface Trip {
   id: string;
+  scheduleId: number;
   date: string;
   status: TripStatus;
   line: string;
-  route: RouteDirection;
+  route: string;
   execution: ExecutionStatus;
+  plannedId?: number;
   plannedVehicle?: string;
   realVehicle?: string;
-  tab?: number;
+  tabId?: number;
+  tab?: string;
   passengers?: number;
   plannedStart?: string;
   realStart?: string;
@@ -20,21 +23,29 @@ export interface Trip {
   travelTime?: string;
   completion?: number;
   consortium: string;
+  rawRoute?: {
+    id: string;
+    nome: string;
+    sentido: string;
+    numeroLinha: string;
+    endPoint: {
+      id: string;
+      nome: string;
+    };
+  };
+  lineNumber?: string;
 }
 
-export type TripStatus = 
-  | 'VIAGEM PLANEJADA E REALIZADA'
-  | 'EM ANDAMENTO'
-  | 'NÃO INICIADA';
+export type TripStatus =
+  | "VIAGEM PLANEJADA E REALIZADA"
+  | "EM ANDAMENTO"
+  | "NÃO INICIADA";
 
-export type RouteDirection = 'ida' | 'volta';
-
-export type ExecutionStatus = 'Fechada' | 'Aberta' | 'Não Iniciada';
+export type ExecutionStatus = "Fechada" | "Aberta" | "Não Iniciada";
 
 export interface FilterOptions {
   line: string;
   route: string;
-  trajeto: string;
   consortium: string;
   startDate: string;
   startTime: string;
@@ -66,7 +77,7 @@ export interface ColumnVisibility {
   completion: boolean;
 }
 
-export type SortDirection = 'asc' | 'desc' | null;
+export type SortDirection = "asc" | "desc" | null;
 
 export interface SortConfig {
   field: keyof Trip | null;
@@ -102,23 +113,23 @@ export const defaultColumnVisibility: ColumnVisibility = {
 };
 
 export const defaultColumnOrder: ColumnKey[] = [
-  'date',
-  'status', 
-  'line',
-  'route',
-  'execution',
-  'plannedVehicle',
-  'realVehicle',
-  'tab',
-  'passengers',
-  'plannedStart',
-  'realStart',
-  'startDiff',
-  'plannedEnd',
-  'realEnd',
-  'endDiff',
-  'headway',
-  'driver',
-  'travelTime',
-  'completion'
+  "date",
+  "status",
+  "line",
+  "route",
+  "execution",
+  "plannedVehicle",
+  "realVehicle",
+  "tab",
+  "passengers",
+  "plannedStart",
+  "realStart",
+  "startDiff",
+  "plannedEnd",
+  "realEnd",
+  "endDiff",
+  "headway",
+  "driver",
+  "travelTime",
+  "completion",
 ];

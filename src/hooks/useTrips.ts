@@ -8,7 +8,6 @@ export interface UseTripsReturn {
   isLoading: boolean;
   error: string | null;
   refreshTrips: () => void;
-  editTrip: (tripData: any) => Promise<void>;
   filters: FilterOptions;
   setFilters: (filters: FilterOptions) => void;
   activeStatus: TripStatus | 'all';
@@ -289,20 +288,6 @@ export const useTrips = (): UseTripsReturn => {
     }
   }, []);
 
-  const editTrip = useCallback(async (tripData: any) => {
-    const api = (await import('@/services/api')).default;
-    
-    try {
-      const response = await api.post('/api/controlePartida/209/editarviagem', tripData);
-      // Refresh trips after successful edit
-      await refreshTrips();
-      return response.data;
-    } catch (error) {
-      console.error('Error editing trip:', error);
-      throw error;
-    }
-  }, [refreshTrips]);
-
   // Filter trips based on current filters and active status
   const filteredTrips = trips.filter(trip => {
     // Status filter
@@ -412,7 +397,6 @@ export const useTrips = (): UseTripsReturn => {
     isLoading,
     error,
     refreshTrips,
-    editTrip,
     filters,
     setFilters,
     activeStatus,

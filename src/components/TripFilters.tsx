@@ -8,9 +8,7 @@ import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
-import { ScheduleModal } from './ScheduleModal';
-import { EditScheduleModal } from './EditScheduleModal';
-import { Filter, Calendar, Clock, Search, Plus, Edit } from 'lucide-react';
+import { Filter, Calendar, Clock, Search } from 'lucide-react';
 
 interface TripFiltersProps {
   filters: FilterOptions;
@@ -40,8 +38,6 @@ export const TripFilters = ({ filters, onFiltersChange, onConsult, isVisible }: 
   const [lines, setLines] = useState<LineData[]>([]);
   const [loadingLines, setLoadingLines] = useState(false);
   const [availableTrajetos, setAvailableTrajetos] = useState<TrajetoData[]>([]);
-  const [scheduleModalOpen, setScheduleModalOpen] = useState(false);
-  const [editScheduleModalOpen, setEditScheduleModalOpen] = useState(false);
 
   const uniqueRoutes = getUniqueRoutes();
   const uniqueConsortiums = getUniqueConsortiums();
@@ -303,39 +299,13 @@ export const TripFilters = ({ filters, onFiltersChange, onConsult, isVisible }: 
         </div>
 
         {/* Action Buttons */}
-        <div className="flex flex-col sm:flex-row justify-end gap-3 pt-4 border-t">
-          <Button 
-            variant="outline" 
-            onClick={() => setScheduleModalOpen(true)} 
-            className="flex items-center gap-2 w-full sm:w-auto"
-          >
-            <Plus className="h-4 w-4" />
-            <span className="block sm:inline">Incluir Horário</span>
-          </Button>
-          <Button 
-            variant="outline" 
-            onClick={() => setEditScheduleModalOpen(true)} 
-            className="flex items-center gap-2 w-full sm:w-auto"
-          >
-            <Edit className="h-4 w-4" />
-            <span className="block sm:inline">Editar Horário</span>
-          </Button>
+        <div className="flex justify-end gap-3 pt-4 border-t">
           <Button onClick={handleConsult} className="flex items-center gap-2">
             <Search className="h-4 w-4" />
             Consultar
           </Button>
         </div>
       </div>
-      
-      <ScheduleModal 
-        isOpen={scheduleModalOpen} 
-        onClose={() => setScheduleModalOpen(false)}
-      />
-      
-      <EditScheduleModal 
-        isOpen={editScheduleModalOpen} 
-        onClose={() => setEditScheduleModalOpen(false)}
-      />
     </Card>
   );
 };
