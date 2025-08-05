@@ -38,19 +38,30 @@ export const TripRegistrationModal = ({ isOpen, onClose, onSave, trip }: TripReg
     alocarViagem: false,
   });
 
+  // Helper function to convert date from DD/MM/YYYY to YYYY-MM-DD
+  const convertDateFormat = (date: string) => {
+    if (!date) return '';
+    if (date.includes('/')) {
+      const [day, month, year] = date.split('/');
+      return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+    }
+    return date;
+  };
+
   useEffect(() => {
     if (trip && isOpen) {
       // Populate form with trip data when editing
+      const convertedDate = convertDateFormat(trip.date || '');
       setFormData({
         linha: trip.line || '',
         trajeto: trip.route === 'ida' ? 'Ida' : trip.route === 'volta' ? 'Volta' : trip.route || '',
-        dataInicial: trip.date || '',
+        dataInicial: convertedDate,
         horaInicial: trip.plannedStart || '00:00:00',
-        dataFinal: trip.date || '',
+        dataFinal: convertedDate,
         horaFinal: trip.plannedEnd || '23:59:59',
         veiculo: trip.plannedVehicle || trip.realVehicle || '',
         motorista: trip.driver || '',
-        chegadaAoPonto: trip.date || '',
+        chegadaAoPonto: convertedDate,
         horaChegada: trip.realStart || trip.plannedStart || '',
         quantidadePassageiros: trip.passengers?.toString() || '',
         motivosPredefinidos: 'MANOBRA OPERACIONAL',
