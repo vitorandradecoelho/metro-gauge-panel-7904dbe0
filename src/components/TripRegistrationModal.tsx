@@ -240,16 +240,25 @@ export const TripRegistrationModal = ({ isOpen, onClose, onSave, trip }: TripReg
             <Label htmlFor="linha" className="text-sm font-medium">
               Linha <span className="text-red-500">*</span>
             </Label>
-            <Select value={formData.linha} onValueChange={(value) => setFormData({ ...formData, linha: value })}>
-              <SelectTrigger className="mt-1">
-                <SelectValue placeholder="Consulte pela linha" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="linha01">Linha 01</SelectItem>
-                <SelectItem value="linha02">Linha 02</SelectItem>
-                <SelectItem value="linha03">Linha 03</SelectItem>
-              </SelectContent>
-            </Select>
+            {trip ? (
+              <Input
+                id="linha"
+                value={formData.linha}
+                disabled
+                className="mt-1 bg-muted"
+              />
+            ) : (
+              <Select value={formData.linha} onValueChange={(value) => setFormData({ ...formData, linha: value })}>
+                <SelectTrigger className="mt-1">
+                  <SelectValue placeholder="Consulte pela linha" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="linha01">Linha 01</SelectItem>
+                  <SelectItem value="linha02">Linha 02</SelectItem>
+                  <SelectItem value="linha03">Linha 03</SelectItem>
+                </SelectContent>
+              </Select>
+            )}
           </div>
 
           {/* Trajeto */}
@@ -257,15 +266,24 @@ export const TripRegistrationModal = ({ isOpen, onClose, onSave, trip }: TripReg
             <Label htmlFor="trajeto" className="text-sm font-medium">
               Trajeto <span className="text-red-500">*</span>
             </Label>
-            <Select value={formData.trajeto} onValueChange={(value) => setFormData({ ...formData, trajeto: value })}>
-              <SelectTrigger className="mt-1">
-                <SelectValue placeholder="Consulte pelo trajeto" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="terminal-centro">Terminal - Centro</SelectItem>
-                <SelectItem value="centro-terminal">Centro - Terminal</SelectItem>
-              </SelectContent>
-            </Select>
+            {trip ? (
+              <Input
+                id="trajeto"
+                value={formData.trajeto}
+                disabled
+                className="mt-1 bg-muted"
+              />
+            ) : (
+              <Select value={formData.trajeto} onValueChange={(value) => setFormData({ ...formData, trajeto: value })}>
+                <SelectTrigger className="mt-1">
+                  <SelectValue placeholder="Consulte pelo trajeto" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="terminal-centro">Terminal - Centro</SelectItem>
+                  <SelectItem value="centro-terminal">Centro - Terminal</SelectItem>
+                </SelectContent>
+              </Select>
+            )}
           </div>
 
           {/* Data Inicial e Final */}
