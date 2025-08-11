@@ -102,16 +102,30 @@ export const TripRegistrationModal = ({ isOpen, onClose, onSave, trip }: TripReg
   }, [trip, isOpen]);
 
   const validateArrivalTime = () => {
+    console.log('Validando horários:', {
+      chegadaAoPonto: formData.chegadaAoPonto,
+      horaChegada: formData.horaChegada,
+      dataInicial: formData.dataInicial,
+      horaInicial: formData.horaInicial
+    });
+
     if (!formData.chegadaAoPonto || !formData.horaChegada || !formData.dataInicial || !formData.horaInicial) {
+      console.log('Campos obrigatórios em falta, pulando validação');
       return true; // Skip validation if required fields are empty
     }
 
     const arrivalDateTime = new Date(`${formData.chegadaAoPonto}T${formData.horaChegada}`);
     const tripStartDateTime = new Date(`${formData.dataInicial}T${formData.horaInicial}`);
     
+    console.log('Data/hora de chegada:', arrivalDateTime);
+    console.log('Data/hora de início:', tripStartDateTime);
+    
     // Calculate difference in hours
     const diffInMs = tripStartDateTime.getTime() - arrivalDateTime.getTime();
     const diffInHours = diffInMs / (1000 * 60 * 60);
+    
+    console.log('Diferença em horas:', diffInHours);
+    console.log('Validação passou:', diffInHours >= 2);
     
     return diffInHours >= 2;
   };
@@ -137,12 +151,16 @@ export const TripRegistrationModal = ({ isOpen, onClose, onSave, trip }: TripReg
   };
 
   const handleSave = async () => {
-    // Check arrival time validation for trip editing
-    if (trip && !validateArrivalTime()) {
+    // Check arrival time validation for both new trips and editing
+    console.log('Executando validação no handleSave...');
+    if (!validateArrivalTime()) {
+      console.log('Validação falhou, mostrando SweetAlert');
       const shouldContinue = await showArrivalTimeAlert();
       if (!shouldContinue) {
+        console.log('Usuário escolheu não continuar');
         return; // User chose not to continue
       }
+      console.log('Usuário escolheu continuar');
     }
 
     if (trip) {
@@ -157,12 +175,16 @@ export const TripRegistrationModal = ({ isOpen, onClose, onSave, trip }: TripReg
   };
 
   const handleSaveAndAllocate = async () => {
-    // Check arrival time validation for trip editing
-    if (trip && !validateArrivalTime()) {
+    // Check arrival time validation for both new trips and editing
+    console.log('Executando validação no handleSaveAndAllocate...');
+    if (!validateArrivalTime()) {
+      console.log('Validação falhou, mostrando SweetAlert');
       const shouldContinue = await showArrivalTimeAlert();
       if (!shouldContinue) {
+        console.log('Usuário escolheu não continuar');
         return; // User chose not to continue
       }
+      console.log('Usuário escolheu continuar');
     }
 
     if (trip) {
