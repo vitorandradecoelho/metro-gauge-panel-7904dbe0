@@ -10,6 +10,7 @@ import { Calendar, Clock, X } from 'lucide-react';
 import { Trip } from '@/types/trip';
 import { useToast } from '@/hooks/use-toast';
 import { useTrips } from '@/hooks/useTrips';
+import Swal from 'sweetalert2';
 
 interface TripRegistrationModalProps {
   isOpen: boolean;
@@ -100,7 +101,50 @@ export const TripRegistrationModal = ({ isOpen, onClose, onSave, trip }: TripReg
     }
   }, [trip, isOpen]);
 
+  const validateArrivalTime = () => {
+    if (!formData.chegadaAoPonto || !formData.horaChegada || !formData.dataInicial || !formData.horaInicial) {
+      return true; // Skip validation if required fields are empty
+    }
+
+    const arrivalDateTime = new Date(`${formData.chegadaAoPonto}T${formData.horaChegada}`);
+    const tripStartDateTime = new Date(`${formData.dataInicial}T${formData.horaInicial}`);
+    
+    // Calculate difference in hours
+    const diffInMs = tripStartDateTime.getTime() - arrivalDateTime.getTime();
+    const diffInHours = diffInMs / (1000 * 60 * 60);
+    
+    return diffInHours >= 2;
+  };
+
+  const showArrivalTimeAlert = async () => {
+    const result = await Swal.fire({
+      title: 'Atenção',
+      text: 'A chegada ao ponto é anterior a 02h do início da viagem, deseja continuar?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sim',
+      cancelButtonText: 'Não',
+      confirmButtonColor: '#8B5CF6',
+      cancelButtonColor: '#6B7280',
+      background: '#1F2937',
+      color: '#F9FAFB',
+      customClass: {
+        popup: 'swal-dark-theme'
+      }
+    });
+    
+    return result.isConfirmed;
+  };
+
   const handleSave = async () => {
+    // Check arrival time validation for trip editing
+    if (trip && !validateArrivalTime()) {
+      const shouldContinue = await showArrivalTimeAlert();
+      if (!shouldContinue) {
+        return; // User chose not to continue
+      }
+    }
+
     if (trip) {
       await handleEditTrip(false);
     } else {
@@ -113,6 +157,14 @@ export const TripRegistrationModal = ({ isOpen, onClose, onSave, trip }: TripReg
   };
 
   const handleSaveAndAllocate = async () => {
+    // Check arrival time validation for trip editing
+    if (trip && !validateArrivalTime()) {
+      const shouldContinue = await showArrivalTimeAlert();
+      if (!shouldContinue) {
+        return; // User chose not to continue
+      }
+    }
+
     if (trip) {
       await handleEditTrip(true);
     } else {
