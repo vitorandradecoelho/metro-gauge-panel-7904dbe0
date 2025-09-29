@@ -35,5 +35,4 @@ export const linesService = {
   }
 };
 
-
 export default api;

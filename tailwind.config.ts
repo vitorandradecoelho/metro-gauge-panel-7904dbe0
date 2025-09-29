@@ -19,6 +19,7 @@ export default {
 		},
 		extend: {
 			colors: {
+				textColorBlue:  'hsl(var(----textColorBlue))',
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
 				ring: 'hsl(var(--ring))',
