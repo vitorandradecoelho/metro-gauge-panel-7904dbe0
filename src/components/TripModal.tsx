@@ -99,7 +99,7 @@ export const TripModal = ({ isOpen, onClose, trip }: TripModalProps) => {
     } catch (e) {
       toast({
         title: t("saveError"),
-        description: e instanceof Error ? e.message : "Unknown error",
+        description: e instanceof Error ? e.message : t("saveError"),
         variant: "destructive",
       });
     }
