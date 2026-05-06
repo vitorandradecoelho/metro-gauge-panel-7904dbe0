@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -7,6 +8,7 @@ import { Calendar, Clock, X } from 'lucide-react';
 import { TripRegistrationModal } from '@/components/TripRegistrationModal';
 
 const TripEdit = () => {
+  const { t } = useTranslation();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [filters, setFilters] = useState({
     empresa: '',
@@ -49,7 +51,7 @@ const TripEdit = () => {
       <Card className="max-w-7xl mx-auto">
         <CardHeader className="bg-primary text-primary-foreground">
           <CardTitle className="text-xl font-bold flex items-center justify-between">
-            <span>EDIÇÃO DE VIAGEM</span>
+            <span>{t('tripEdit')}</span>
             <Button 
               variant="ghost" 
               size="icon"
@@ -63,15 +65,14 @@ const TripEdit = () => {
         
         <CardContent className="p-6">
           <div className="mb-6">
-            <h3 className="text-lg font-semibold mb-4 text-foreground">Filtro</h3>
+            <h3 className="text-lg font-semibold mb-4 text-foreground">{t('filter')}</h3>
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-              {/* Empresa */}
               <div>
-                <label className="block text-sm font-medium mb-2">Empresa</label>
+                <label className="block text-sm font-medium mb-2">{t('company')}</label>
                 <Select value={filters.empresa} onValueChange={(value) => handleFilterChange('empresa', value)}>
                   <SelectTrigger className="bg-primary text-primary-foreground">
-                    <SelectValue placeholder="Empresa" />
+                    <SelectValue placeholder={t('company')} />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="empresa1">Empresa 1</SelectItem>
@@ -80,12 +81,11 @@ const TripEdit = () => {
                 </Select>
               </div>
 
-              {/* Linha */}
               <div>
-                <label className="block text-sm font-medium mb-2">Linha *</label>
+                <label className="block text-sm font-medium mb-2">{t('line')} *</label>
                 <Select value={filters.linha} onValueChange={(value) => handleFilterChange('linha', value)}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Consulte pel..." />
+                    <SelectValue placeholder={t('searchByLine')} />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="linha1">Linha 01</SelectItem>
@@ -94,12 +94,11 @@ const TripEdit = () => {
                 </Select>
               </div>
 
-              {/* Veículo */}
               <div>
-                <label className="block text-sm font-medium mb-2">Veículo *</label>
+                <label className="block text-sm font-medium mb-2">{t('vehicle')} *</label>
                 <Select value={filters.veiculo} onValueChange={(value) => handleFilterChange('veiculo', value)}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Selecione" />
+                    <SelectValue placeholder={t('selectOption')} />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="veiculo1">Veículo 001</SelectItem>
@@ -108,12 +107,11 @@ const TripEdit = () => {
                 </Select>
               </div>
 
-              {/* Trajeto */}
               <div>
-                <label className="block text-sm font-medium mb-2">Trajeto</label>
+                <label className="block text-sm font-medium mb-2">{t('route')}</label>
                 <Select value={filters.trajeto} onValueChange={(value) => handleFilterChange('trajeto', value)}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Consulte pel..." />
+                    <SelectValue placeholder={t('searchByRoute')} />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="trajeto1">Terminal - Centro</SelectItem>
@@ -123,10 +121,9 @@ const TripEdit = () => {
               </div>
             </div>
 
-            {/* Data e Hora */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
               <div>
-                <label className="block text-sm font-medium mb-2">Partida</label>
+                <label className="block text-sm font-medium mb-2">{t('departure')}</label>
                 <div className="flex gap-2">
                   <div className="relative flex-1">
                     <Input
@@ -150,7 +147,7 @@ const TripEdit = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2">Chegada</label>
+                <label className="block text-sm font-medium mb-2">{t('arrival')}</label>
                 <div className="flex gap-2">
                   <div className="relative flex-1">
                     <Input
@@ -174,7 +171,6 @@ const TripEdit = () => {
               </div>
             </div>
 
-            {/* Filtros adicionais */}
             <div className="flex gap-4 mb-6">
               <label className="flex items-center gap-2">
                 <input
@@ -183,7 +179,7 @@ const TripEdit = () => {
                   onChange={(e) => handleFilterChange('excluidas', e.target.checked)}
                   className="rounded border-gray-300"
                 />
-                <span className="text-sm">Excluídas</span>
+                <span className="text-sm">{t('deleted')}</span>
               </label>
               <label className="flex items-center gap-2">
                 <input
@@ -192,30 +188,29 @@ const TripEdit = () => {
                   onChange={(e) => handleFilterChange('canceladas', e.target.checked)}
                   className="rounded border-gray-300"
                 />
-                <span className="text-sm">Canceladas</span>
+                <span className="text-sm">{t('cancelled')}</span>
               </label>
             </div>
 
-            {/* Botões de ação */}
             <div className="flex gap-3 justify-end">
               <Button 
                 onClick={() => setIsModalOpen(true)}
                 className="bg-blue-500 hover:bg-blue-600 text-white px-6"
               >
-                + INCLUIR VIAGEM
+                {t('includeTrip')}
               </Button>
               <Button 
                 variant="outline" 
                 onClick={handleLimpar}
                 className="px-6"
               >
-                LIMPAR
+                {t('clear')}
               </Button>
               <Button 
                 onClick={handleConsultar}
                 className="bg-primary hover:bg-primary/90 px-6"
               >
-                CONSULTAR
+                {t('consult')}
               </Button>
             </div>
           </div>

@@ -43,8 +43,8 @@ export const EditScheduleModal = ({ isOpen, onClose }: EditScheduleModalProps) =
     if (!operacion) {
       toast({
         variant: "destructive",
-        title: "Erro",
-        description: "Por favor, selecione uma operação."
+        title: t('error'),
+        description: t('selectOperation')
       });
       return;
     }
@@ -57,8 +57,8 @@ export const EditScheduleModal = ({ isOpen, onClose }: EditScheduleModalProps) =
     if (operacion === 'Editar' && (!horaInicio || !horaFim)) {
       toast({
         variant: "destructive",
-        title: "Erro",
-        description: "Por favor, preencha os horários de início e fim."
+        title: t('error'),
+        description: t('fillStartEndTimes')
       });
       return;
     }
@@ -83,17 +83,17 @@ export const EditScheduleModal = ({ isOpen, onClose }: EditScheduleModalProps) =
       await api.put('/planejamento-viagem-api/v1/dashboard/editarHorario', editData);
       
       toast({
-        title: "Sucesso",
-        description: "Horário editado com sucesso!"
+        title: t('success'),
+        description: t('scheduleEditedSuccess')
       });
       
       handleClose();
     } catch (error) {
-      console.error('Erro ao editar horário:', error);
+      console.error('Error editing schedule:', error);
       toast({
         variant: "destructive",
-        title: "Erro",
-        description: "Erro ao editar horário. Tente novamente."
+        title: t('error'),
+        description: t('scheduleEditError')
       });
     } finally {
       setIsLoading(false);
@@ -129,17 +129,17 @@ export const EditScheduleModal = ({ isOpen, onClose }: EditScheduleModalProps) =
       await api.put('/planejamento-viagem-api/v1/dashboard/editarHorario', deleteData);
       
       toast({
-        title: "Sucesso",
-        description: "Horários eliminados com sucesso!"
+        title: t('success'),
+        description: t('schedulesDeletedSuccess')
       });
       
       handleClose();
     } catch (error) {
-      console.error('Erro ao eliminar horários:', error);
+      console.error('Error deleting schedules:', error);
       toast({
         variant: "destructive",
-        title: "Erro",
-        description: "Erro ao eliminar horários. Tente novamente."
+        title: t('error'),
+        description: t('schedulesDeleteError')
       });
     } finally {
       setIsLoading(false);
@@ -152,20 +152,20 @@ export const EditScheduleModal = ({ isOpen, onClose }: EditScheduleModalProps) =
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle className="text-lg font-semibold">
-              EDITAR HORÁRIO
+              {t('editSchedule')}
             </DialogTitle>
           </DialogHeader>
           
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label htmlFor="operacion">Operación</Label>
+              <Label htmlFor="operacion">{t('operation')}</Label>
               <Select value={operacion} onValueChange={setOperacion}>
                 <SelectTrigger id="operacion">
-                  <SelectValue placeholder="SELECCIONE" />
+                  <SelectValue placeholder={t('select')} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Editar">Editar</SelectItem>
-                  <SelectItem value="Eliminar">Eliminar</SelectItem>
+                  <SelectItem value="Editar">{t('edit')}</SelectItem>
+                  <SelectItem value="Eliminar">{t('eliminate')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -179,13 +179,13 @@ export const EditScheduleModal = ({ isOpen, onClose }: EditScheduleModalProps) =
                     onCheckedChange={(checked) => setAlterarJornada(checked === true)}
                   />
                   <Label htmlFor="alterar-jornada" className="text-sm">
-                    Alterar jornada
+                    {t('changeShift')}
                   </Label>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="hora-inicio">Hora Início</Label>
+                    <Label htmlFor="hora-inicio">{t('startTime')}</Label>
                     <div className="relative">
                       <Input
                         id="hora-inicio"
@@ -199,7 +199,7 @@ export const EditScheduleModal = ({ isOpen, onClose }: EditScheduleModalProps) =
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="hora-fim">Hora Fim</Label>
+                    <Label htmlFor="hora-fim">{t('endTime')}</Label>
                     <div className="relative">
                       <Input
                         id="hora-fim"
@@ -222,14 +222,14 @@ export const EditScheduleModal = ({ isOpen, onClose }: EditScheduleModalProps) =
               onClick={handleClose}
               disabled={isLoading}
             >
-              CANCELAR
+              {t('cancel')}
             </Button>
             <Button
               onClick={handleSave}
               disabled={isLoading || !operacion}
               className="bg-primary hover:bg-primary/90"
             >
-              {isLoading ? 'Guardando...' : 'GUARDAR'}
+              {isLoading ? t('saving') : t('save')}
             </Button>
           </div>
         </DialogContent>
@@ -244,19 +244,19 @@ export const EditScheduleModal = ({ isOpen, onClose }: EditScheduleModalProps) =
               </div>
             </div>
             <AlertDialogTitle className="text-center text-lg font-semibold">
-              ¿Estás seguro?
+              {t('areYouSure')}
             </AlertDialogTitle>
             <AlertDialogDescription className="text-center">
-              Los horarios de las jornadas se eliminarán:
+              {t('schedulesWillBeDeleted')}
             </AlertDialogDescription>
           </AlertDialogHeader>
           
           <div className="space-y-2 py-4">
             <div className="grid grid-cols-4 gap-2 text-sm font-medium border-b pb-2">
-              <span>Jornada</span>
-              <span>Sentido</span>
-              <span>Salida</span>
-              <span>Llegada</span>
+              <span>{t('shift')}</span>
+              <span>{t('direction')}</span>
+              <span>{t('exitTime')}</span>
+              <span>{t('arrivalTime')}</span>
             </div>
             <div className="grid grid-cols-4 gap-2 text-sm">
               <span>1a</span>
@@ -274,13 +274,13 @@ export const EditScheduleModal = ({ isOpen, onClose }: EditScheduleModalProps) =
 
           <AlertDialogFooter className="flex justify-center gap-2">
             <AlertDialogCancel className="bg-gray-500 hover:bg-gray-600 text-white">
-              Cancelar
+              {t('cancel')}
             </AlertDialogCancel>
             <AlertDialogAction 
               onClick={handleDeleteConfirm}
               className="bg-green-600 hover:bg-green-700 text-white"
             >
-              Guardar
+              {t('save')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
