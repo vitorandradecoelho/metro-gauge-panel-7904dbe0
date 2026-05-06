@@ -64,7 +64,7 @@ export const TripModal = ({ isOpen, onClose, trip }: TripModalProps) => {
     if (!selectedVehicle.cod_veiculo) {
       toast({
         title: t("saveError"),
-        description: t("vehicle") + " é obrigatório",
+        description: t("vehicleRequired"),
         variant: "destructive",
       });
       return;
@@ -125,7 +125,7 @@ export const TripModal = ({ isOpen, onClose, trip }: TripModalProps) => {
         );
         setVehicles(response.data);
       } catch (e) {
-        toast({ title: "Erro ao buscar dados" });
+        toast({ title: t("fetchDataError") });
       }
     }
 
