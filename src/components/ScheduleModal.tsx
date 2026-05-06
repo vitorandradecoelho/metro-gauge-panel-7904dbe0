@@ -42,8 +42,8 @@ export const ScheduleModal = ({ isOpen, onClose }: ScheduleModalProps) => {
     if (!servico || !ruta || !jornada || !horaInicio || !horaFim) {
       toast({
         variant: "destructive",
-        title: "Erro",
-        description: "Por favor, preencha todos os campos obrigatórios."
+        title: t('error'),
+        description: t('fillAllRequired')
       });
       return;
     }
@@ -67,17 +67,17 @@ export const ScheduleModal = ({ isOpen, onClose }: ScheduleModalProps) => {
       await api.post('/planejamento-viagem-api/v1/dashboard/incluirHorario', scheduleData);
       
       toast({
-        title: "Sucesso",
-        description: "Horário incluído com sucesso!"
+        title: t('success'),
+        description: t('scheduleIncludedSuccess')
       });
       
       handleClose();
     } catch (error) {
-      console.error('Erro ao incluir horário:', error);
+      console.error('Error including schedule:', error);
       toast({
         variant: "destructive",
-        title: "Erro",
-        description: "Erro ao incluir horário. Tente novamente."
+        title: t('error'),
+        description: t('scheduleIncludeError')
       });
     } finally {
       setIsLoading(false);
@@ -89,13 +89,13 @@ export const ScheduleModal = ({ isOpen, onClose }: ScheduleModalProps) => {
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="text-lg font-semibold">
-            INCLUIR HORÁRIO
+            {t('includeSchedule')}
           </DialogTitle>
         </DialogHeader>
         
         <div className="space-y-4 py-4">
           <div className="space-y-2">
-            <Label htmlFor="servico">Serviço</Label>
+            <Label htmlFor="servico">{t('service')}</Label>
             <Select value={servico} onValueChange={setServico}>
               <SelectTrigger id="servico">
                 <SelectValue placeholder="T510" />
@@ -110,7 +110,7 @@ export const ScheduleModal = ({ isOpen, onClose }: ScheduleModalProps) => {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="ruta">Ruta</Label>
+            <Label htmlFor="ruta">{t('routeLabel')}</Label>
             <Select value={ruta} onValueChange={setRuta}>
               <SelectTrigger id="ruta">
                 <SelectValue placeholder="T51000I" />
@@ -125,7 +125,7 @@ export const ScheduleModal = ({ isOpen, onClose }: ScheduleModalProps) => {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="jornada">Jornada</Label>
+            <Label htmlFor="jornada">{t('shift')}</Label>
             <Select value={jornada} onValueChange={setJornada}>
               <SelectTrigger id="jornada">
                 <SelectValue placeholder="1a" />
@@ -143,7 +143,7 @@ export const ScheduleModal = ({ isOpen, onClose }: ScheduleModalProps) => {
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="hora-inicio">Hora Início</Label>
+              <Label htmlFor="hora-inicio">{t('startTime')}</Label>
               <div className="relative">
                 <Input
                   id="hora-inicio"
@@ -157,7 +157,7 @@ export const ScheduleModal = ({ isOpen, onClose }: ScheduleModalProps) => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="hora-fim">Hora Fim</Label>
+              <Label htmlFor="hora-fim">{t('endTime')}</Label>
               <div className="relative">
                 <Input
                   id="hora-fim"
@@ -178,14 +178,14 @@ export const ScheduleModal = ({ isOpen, onClose }: ScheduleModalProps) => {
             onClick={handleClose}
             disabled={isLoading}
           >
-            CANCELAR
+            {t('cancel')}
           </Button>
           <Button
             onClick={handleSave}
             disabled={isLoading}
             className="bg-primary hover:bg-primary/90"
           >
-            {isLoading ? 'Guardando...' : 'GUARDAR'}
+            {isLoading ? t('saving') : t('save')}
           </Button>
         </div>
       </DialogContent>

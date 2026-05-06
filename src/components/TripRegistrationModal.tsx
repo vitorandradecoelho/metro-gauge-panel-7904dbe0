@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -15,6 +16,7 @@ interface TripRegistrationModalProps {
 }
 
 export const TripRegistrationModal = ({ isOpen, onClose, onSave }: TripRegistrationModalProps) => {
+  const { t } = useTranslation();
   const [formData, setFormData] = useState({
     linha: '',
     trajeto: '',
@@ -54,7 +56,7 @@ export const TripRegistrationModal = ({ isOpen, onClose, onSave }: TripRegistrat
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader className="bg-primary text-primary-foreground p-4 -m-6 mb-6">
           <DialogTitle className="flex items-center justify-between">
-            <span>CADASTRAR VIAGEM</span>
+            <span>{t('registerTrip')}</span>
             <Button 
               variant="ghost" 
               size="icon"
@@ -70,11 +72,11 @@ export const TripRegistrationModal = ({ isOpen, onClose, onSave }: TripRegistrat
           {/* Linha */}
           <div>
             <Label htmlFor="linha" className="text-sm font-medium">
-              Linha <span className="text-red-500">*</span>
+              {t('line')} <span className="text-red-500">*</span>
             </Label>
             <Select value={formData.linha} onValueChange={(value) => setFormData({ ...formData, linha: value })}>
               <SelectTrigger className="mt-1">
-                <SelectValue placeholder="Consulte pela linha" />
+                <SelectValue placeholder={t('searchByLine')} />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="linha01">Linha 01</SelectItem>
@@ -87,11 +89,11 @@ export const TripRegistrationModal = ({ isOpen, onClose, onSave }: TripRegistrat
           {/* Trajeto */}
           <div>
             <Label htmlFor="trajeto" className="text-sm font-medium">
-              Trajeto <span className="text-red-500">*</span>
+              {t('route')} <span className="text-red-500">*</span>
             </Label>
             <Select value={formData.trajeto} onValueChange={(value) => setFormData({ ...formData, trajeto: value })}>
               <SelectTrigger className="mt-1">
-                <SelectValue placeholder="Consulte pelo trajeto" />
+                <SelectValue placeholder={t('searchByRoute')} />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="terminal-centro">Terminal - Centro</SelectItem>
@@ -103,7 +105,7 @@ export const TripRegistrationModal = ({ isOpen, onClose, onSave }: TripRegistrat
           {/* Data Inicial e Final */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="dataInicial" className="text-sm font-medium">Data Inicial:</Label>
+              <Label htmlFor="dataInicial" className="text-sm font-medium">{t('initialDate')}</Label>
               <div className="relative mt-1">
                 <Input
                   id="dataInicial"
@@ -126,7 +128,7 @@ export const TripRegistrationModal = ({ isOpen, onClose, onSave }: TripRegistrat
             </div>
 
             <div>
-              <Label htmlFor="dataFinal" className="text-sm font-medium">Data Final:</Label>
+              <Label htmlFor="dataFinal" className="text-sm font-medium">{t('finalDate')}</Label>
               <div className="relative mt-1">
                 <Input
                   id="dataFinal"
@@ -152,10 +154,10 @@ export const TripRegistrationModal = ({ isOpen, onClose, onSave }: TripRegistrat
           {/* Veículo e Motorista */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="veiculo" className="text-sm font-medium">Veículo</Label>
+              <Label htmlFor="veiculo" className="text-sm font-medium">{t('vehicle')}</Label>
               <Select value={formData.veiculo} onValueChange={(value) => setFormData({ ...formData, veiculo: value })}>
                 <SelectTrigger className="mt-1">
-                  <SelectValue placeholder="Selecione" />
+                  <SelectValue placeholder={t('selectOption')} />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="veiculo001">Veículo 001</SelectItem>
@@ -165,10 +167,10 @@ export const TripRegistrationModal = ({ isOpen, onClose, onSave }: TripRegistrat
             </div>
 
             <div>
-              <Label htmlFor="motorista" className="text-sm font-medium">Motorista</Label>
+              <Label htmlFor="motorista" className="text-sm font-medium">{t('driver')}</Label>
               <Select value={formData.motorista} onValueChange={(value) => setFormData({ ...formData, motorista: value })}>
                 <SelectTrigger className="mt-1">
-                  <SelectValue placeholder="Selecione um" />
+                  <SelectValue placeholder={t('selectOne')} />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="motorista1">João Silva</SelectItem>
@@ -180,7 +182,7 @@ export const TripRegistrationModal = ({ isOpen, onClose, onSave }: TripRegistrat
 
           {/* Chegada ao ponto */}
           <div>
-            <Label htmlFor="chegadaAoPonto" className="text-sm font-medium">Chegada ao ponto:</Label>
+            <Label htmlFor="chegadaAoPonto" className="text-sm font-medium">{t('arrivalAtPoint')}</Label>
             <div className="relative mt-1">
               <Input
                 id="chegadaAoPonto"
@@ -205,7 +207,7 @@ export const TripRegistrationModal = ({ isOpen, onClose, onSave }: TripRegistrat
 
           {/* Switch para Alocar Viagem */}
           <div className="flex items-center justify-between p-4 bg-muted/50 rounded-lg">
-            <Label htmlFor="alocarViagem" className="text-sm font-medium">Alocar Viagem</Label>
+            <Label htmlFor="alocarViagem" className="text-sm font-medium">{t('allocateTrip')}</Label>
             <Switch
               id="alocarViagem"
               checked={formData.alocarViagem}
@@ -215,11 +217,11 @@ export const TripRegistrationModal = ({ isOpen, onClose, onSave }: TripRegistrat
 
           {/* Quantidade de Passageiros */}
           <div>
-            <Label htmlFor="quantidadePassageiros" className="text-sm font-medium">Quantidade de Passageiros</Label>
+            <Label htmlFor="quantidadePassageiros" className="text-sm font-medium">{t('passengerCount')}</Label>
             <Input
               id="quantidadePassageiros"
               type="number"
-              placeholder="Quantidade de Passageiros"
+              placeholder={t('passengerCount')}
               value={formData.quantidadePassageiros}
               onChange={(e) => setFormData({ ...formData, quantidadePassageiros: e.target.value })}
               className="mt-1"
@@ -228,32 +230,32 @@ export const TripRegistrationModal = ({ isOpen, onClose, onSave }: TripRegistrat
 
           {/* Motivos Predefinidos */}
           <div>
-            <Label htmlFor="motivosPredefinidos" className="text-sm font-medium">Motivos Predefinidos</Label>
+            <Label htmlFor="motivosPredefinidos" className="text-sm font-medium">{t('predefinedReasons')}</Label>
             <Select value={formData.motivosPredefinidos} onValueChange={(value) => setFormData({ ...formData, motivosPredefinidos: value })}>
               <SelectTrigger className="mt-1">
-                <SelectValue placeholder="Selecione" />
+                <SelectValue placeholder={t('selectOption')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="atraso">Atraso</SelectItem>
-                <SelectItem value="manutencao">Manutenção</SelectItem>
-                <SelectItem value="reforco">Reforço</SelectItem>
+                <SelectItem value="atraso">{t('delay')}</SelectItem>
+                <SelectItem value="manutencao">{t('maintenance')}</SelectItem>
+                <SelectItem value="reforco">{t('reinforcement')}</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
           {/* Observação */}
           <div>
-            <Label htmlFor="observacao" className="text-sm font-medium">Observação</Label>
+            <Label htmlFor="observacao" className="text-sm font-medium">{t('observation')}</Label>
             <Textarea
               id="observacao"
-              placeholder="Observação"
+              placeholder={t('observation')}
               value={formData.observacao}
               onChange={(e) => setFormData({ ...formData, observacao: e.target.value })}
               className="mt-1 min-h-[100px]"
             />
           </div>
 
-          <p className="text-sm text-muted-foreground italic">*Campos Obrigatórios</p>
+          <p className="text-sm text-muted-foreground italic">{t('requiredFields')}</p>
         </div>
 
         <div className="flex justify-end gap-3 pt-4 border-t">
@@ -261,16 +263,16 @@ export const TripRegistrationModal = ({ isOpen, onClose, onSave }: TripRegistrat
             onClick={handleSaveAndAllocate}
             className="bg-blue-500 hover:bg-blue-600 text-white"
           >
-            SALVAR + ALOCAR
+            {t('saveAndAllocate')}
           </Button>
           <Button 
             onClick={handleSave}
             className="bg-primary hover:bg-primary/90"
           >
-            SALVAR
+            {t('save')}
           </Button>
           <Button variant="outline" onClick={onClose}>
-            CANCELAR
+            {t('cancel')}
           </Button>
         </div>
       </DialogContent>
